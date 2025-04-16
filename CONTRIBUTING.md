@@ -66,6 +66,54 @@ This project follows these code style guidelines:
 
 The pre-commit hooks will automatically check and fix many style issues when you commit.
 
+### Docstrings
+
+All modules, classes, and functions should have docstrings. This project follows the [Google style docstrings](https://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_google.html) format.
+
+**Module Docstrings:**
+```python
+"""Module description.
+
+Detailed description of the module's purpose and functionality.
+"""
+```
+
+**Function/Method Docstrings:**
+```python
+def function_name(param1: type, param2: type) -> return_type:
+    """Short description of the function.
+
+    More detailed description of what the function does and any
+    important information about its behavior.
+
+    Args:
+        param1: Description of param1
+        param2: Description of param2
+
+    Returns:
+        Description of the return value
+
+    Raises:
+        ExceptionType: When and why this exception is raised
+    """
+```
+
+**Class Docstrings:**
+```python
+class ClassName:
+    """Short description of the class.
+
+    More detailed description of what the class does and any
+    important information about its behavior.
+
+    Attributes:
+        attr1: Description of attr1
+        attr2: Description of attr2
+    """
+```
+
+Type hints should be used in conjunction with docstrings to provide complete documentation of code behavior.
+
 ## Testing
 
 All new features should include tests. Run the tests with:
