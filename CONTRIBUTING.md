@@ -137,6 +137,21 @@ Please update the documentation when adding or modifying features. Documentation
 7. Once approved, your pull request will be merged
 8. After merging, delete your feature branch
 
+## Working with Issues
+
+1. **Task Tracking**:
+   - Issues contain task lists with checkboxes `- [ ]` for tracking progress
+   - Update these checkboxes as you complete tasks by editing the issue
+   - This provides clear visibility of progress for all contributors
+
+2. **Issue References**:
+   - Always reference the issue you're working on in commit messages (e.g., "#123: Implement database models")
+   - When creating branches, include the issue number (e.g., `feature/123-database-models`)
+
+3. **Issue Updates**:
+   - Provide regular updates on issues you're working on
+   - If you encounter blockers, document them in the issue
+
 ## Guidelines for AI Agents
 
 If you're an AI agent contributing to this project, please follow these additional guidelines:
@@ -146,6 +161,7 @@ If you're an AI agent contributing to this project, please follow these addition
    - When replacing a PR with another one, reference both the issue and the PR being replaced
    - Close issues automatically through PR merges when possible
    - Delete branches after merging to keep the repository clean
+   - Update task checkboxes in issues as you complete them
 
 2. **Markdown Handling**:
    - For complex markdown content (PR descriptions, issue templates, etc.), create temporary markdown files and use them as input
@@ -166,6 +182,7 @@ If you're an AI agent contributing to this project, please follow these addition
 3. **Communication**:
    - Clearly state what you're doing and why in commit messages and PR descriptions
    - When replacing or closing PRs, explain the reason for doing so
+   - Always check CONTRIBUTING.md (this document) for project-specific guidelines
 
 ## License
 
