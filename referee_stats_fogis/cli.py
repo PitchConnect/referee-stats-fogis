@@ -68,8 +68,66 @@ def init_db_command(args: argparse.Namespace) -> int:
         Exit code
     """
     print("Initializing database...")
-    Database()  # Initialize the database
-    print("Database initialized successfully.")
+    from referee_stats_fogis.data.db_manager import create_database
+
+    create_database()
+    return 0
+
+
+def migrate_db_command(args: argparse.Namespace) -> int:
+    """Run database migrations.
+
+    Args:
+        args: Command-line arguments
+
+    Returns:
+        Exit code
+    """
+    from referee_stats_fogis.data.db_manager import run_migrations
+
+    revision = args.revision if hasattr(args, "revision") else None
+    run_migrations(revision)
+    return 0
+
+
+def create_migration_command(args: argparse.Namespace) -> int:
+    """Create a new database migration.
+
+    Args:
+        args: Command-line arguments
+
+    Returns:
+        Exit code
+    """
+    from referee_stats_fogis.data.db_manager import create_migration
+
+    create_migration(args.message)
+    return 0
+
+
+def reset_db_command(args: argparse.Namespace) -> int:
+    """Reset the database.
+
+    Args:
+        args: Command-line arguments
+
+    Returns:
+        Exit code
+    """
+    if (
+        not args.force
+        and input(
+            "Are you sure you want to reset the database? "
+            "This will delete all data. (y/N) "
+        ).lower()
+        != "y"
+    ):
+        print("Database reset cancelled.")
+        return 0
+
+    from referee_stats_fogis.data.db_manager import reset_database
+
+    reset_database()
     return 0
 
 
@@ -99,9 +157,36 @@ def main(argv: list[str] | None = None) -> int:
     )
     stats_parser.set_defaults(func=stats_command)
 
+    # Database commands
+    db_subparsers = subparsers.add_parser("db", help="Database operations")
+    db_commands = db_subparsers.add_subparsers(
+        dest="db_command", help="Database command to run"
+    )
+
     # Init DB command
-    init_db_parser = subparsers.add_parser("init-db", help="Initialize the database")
+    init_db_parser = db_commands.add_parser("init", help="Initialize the database")
     init_db_parser.set_defaults(func=init_db_command)
+
+    # Migrate DB command
+    migrate_db_parser = db_commands.add_parser(
+        "migrate", help="Run database migrations"
+    )
+    migrate_db_parser.add_argument("--revision", help="Specific revision to migrate to")
+    migrate_db_parser.set_defaults(func=migrate_db_command)
+
+    # Create Migration command
+    create_migration_parser = db_commands.add_parser(
+        "create-migration", help="Create a new database migration"
+    )
+    create_migration_parser.add_argument("message", help="Migration message")
+    create_migration_parser.set_defaults(func=create_migration_command)
+
+    # Reset DB command
+    reset_db_parser = db_commands.add_parser("reset", help="Reset the database")
+    reset_db_parser.add_argument(
+        "--force", action="store_true", help="Force reset without confirmation"
+    )
+    reset_db_parser.set_defaults(func=reset_db_command)
 
     args = parser.parse_args(argv)
 
