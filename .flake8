@@ -1,6 +1,12 @@
 [flake8]
 max-line-length = 88
-extend-ignore = E203, W503, Q000, F401
+# E203: Whitespace before ':' (conflicts with Black)
+# W503: Line break before binary operator (conflicts with Black)
+# Q000: Double quotes found but single quotes preferred (stylistic choice)
+# F401: Module imported but unused (useful for __init__.py files)
+# F541: f-string without any placeholders (allows for future string interpolation)
+# E231: Missing whitespace after ',', ';', or ':' (conflicts with Black in some cases)
+extend-ignore = E203, W503, Q000, F401, F541, E231
 exclude = .git,__pycache__,build,dist,.venv
 per-file-ignores =
     __init__.py:F401
