@@ -1,5 +1,8 @@
 # Core dependencies
 pyyaml>=6.0
+sqlalchemy>=2.0.40
+alembic>=1.15.2
+psycopg2-binary>=2.9.10
 
 # Development dependencies (optional)
 # Install with: pip install -r requirements-dev.txt
