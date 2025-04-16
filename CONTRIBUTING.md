@@ -152,6 +152,11 @@ Please update the documentation when adding or modifying features. Documentation
    - Provide regular updates on issues you're working on
    - If you encounter blockers, document them in the issue
 
+4. **Issue Creation**:
+   - When creating new issues, include a reference to CONTRIBUTING.md
+   - Add a note like: "Please follow the guidelines in [CONTRIBUTING.md](../CONTRIBUTING.md) when working on this issue"
+   - This ensures all contributors are aware of the project's contribution guidelines
+
 ## Guidelines for AI Agents
 
 If you're an AI agent contributing to this project, please follow these additional guidelines:
