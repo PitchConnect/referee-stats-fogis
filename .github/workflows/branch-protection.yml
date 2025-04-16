@@ -1,0 +1,29 @@
+name: Branch Protection
+
+on:
+  workflow_dispatch:
+
+jobs:
+  setup-branch-protection:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup branch protection
+        uses: SvanBoxel/organization-workflow@main
+        with:
+          enforce_admin: false
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          repository: ${{ github.repository }}
+          branch: main
+          required_status_checks: |
+            ci/build
+            ci/test
+          required_pull_request_reviews: |
+            required_approving_review_count: 1
+            dismiss_stale_reviews: true
+            require_code_owner_reviews: false
+          restrictions: |
+            users: []
+            teams: []
