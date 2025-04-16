@@ -14,6 +14,7 @@ repos:
     rev: 24.3.0
     hooks:
     -   id: black
+        args: [--preview]  # More aggressive line breaking
 
 -   repo: https://github.com/pycqa/isort
     rev: 5.13.2
@@ -43,3 +44,23 @@ repos:
     hooks:
     -   id: pyupgrade
         args: [--py310-plus]
+
+-   repo: local
+    hooks:
+    -   id: docformatter
+        name: docformatter
+        description: 'Formats docstrings to follow PEP 257'
+        entry: docformatter
+        args: [--in-place, --wrap-summaries=88, --wrap-descriptions=88]
+        language: python
+        types: [python]
+
+-   repo: https://github.com/PyCQA/autoflake
+    rev: v2.2.1
+    hooks:
+    -   id: autoflake
+        args: [
+            --remove-all-unused-imports,
+            --remove-unused-variables,
+            --in-place
+        ]
