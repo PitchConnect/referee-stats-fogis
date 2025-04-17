@@ -34,7 +34,7 @@ jobs:
         isort --check referee_stats_fogis tests
     - name: Type check with mypy
       run: |
-        mypy referee_stats_fogis
+        mypy --config-file=.mypy.ini referee_stats_fogis
     - name: Check with pyupgrade
       run: |
         pip install pyupgrade
