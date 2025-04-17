@@ -1,6 +1,5 @@
 """Database models for the referee stats application."""
 
-
 from sqlalchemy import (
     Boolean,
     Column,
