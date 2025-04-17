@@ -38,7 +38,8 @@ repos:
     -   id: mypy
         additional_dependencies: [
             'types-requests',
-            'types-PyYAML',
+            'types-PyYAML>=6.0.12',
+            'sqlalchemy-stubs>=0.4',
         ]
 
 -   repo: https://github.com/asottile/pyupgrade

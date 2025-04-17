@@ -42,6 +42,7 @@ jobs:
         isort --check referee_stats_fogis tests
     - name: Type check with mypy
       run: |
+        pip install types-PyYAML sqlalchemy-stubs
         mypy --config-file=.mypy.ini referee_stats_fogis
     - name: Check with pyupgrade
       run: |

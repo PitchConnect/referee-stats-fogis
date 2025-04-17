@@ -35,6 +35,8 @@ dev = [
     "pytest",
     "pytest-cov",
     "pre-commit",
+    "types-PyYAML>=6.0.12",
+    "sqlalchemy-stubs>=0.4",
 ]
 
 [tool.black]
