@@ -1,9 +1,8 @@
-"""Initial migration
+"""Initial migration for the database schema.
 
 Revision ID: 5ee7a62d717d
 Revises:
 Create Date: 2025-04-17 00:02:02.663020
-
 """
 
 from collections.abc import Sequence
