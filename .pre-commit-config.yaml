@@ -73,5 +73,9 @@ repos:
         args: [
             --remove-all-unused-imports,
             --remove-unused-variables,
-            --in-place
+            --in-place,
+            --expand-star-imports,
+            --remove-duplicate-keys
         ]
+        files: \.py$
+        exclude: ^migrations/

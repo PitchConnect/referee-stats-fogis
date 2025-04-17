@@ -59,7 +59,6 @@ def get_session() -> Session:
     Returns:
         SQLAlchemy session
     """
-    global _SessionFactory
     if _SessionFactory is None:
         init_db()
     session_factory = _SessionFactory
