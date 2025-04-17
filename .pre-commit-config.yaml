@@ -75,6 +75,7 @@ repos:
     rev: v2.2.1
     hooks:
     -   id: autoflake
+        name: autoflake (fix)
         args: [
             --remove-all-unused-imports,
             --remove-unused-variables,
@@ -84,6 +85,19 @@ repos:
         ]
         files: \.py$
         exclude: ^migrations/
+        verbose: true
+    -   id: autoflake
+        name: autoflake (check)
+        args: [
+            --check,
+            --remove-all-unused-imports,
+            --remove-unused-variables,
+            --expand-star-imports,
+            --remove-duplicate-keys
+        ]
+        files: \.py$
+        exclude: ^migrations/
+        verbose: true
 
 -   repo: https://github.com/rhysd/actionlint
     rev: v1.6.26

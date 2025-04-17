@@ -6,7 +6,6 @@ import unittest
 from datetime import datetime
 from typing import Any, cast
 
-import pytest
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session, sessionmaker
 

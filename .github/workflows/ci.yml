@@ -55,7 +55,7 @@ jobs:
         docformatter --check --wrap-summaries=88 --wrap-descriptions=88 $(find referee_stats_fogis tests -name "*.py")
     - name: Check with autoflake
       run: |
-        pip install autoflake
+        pip install autoflake==2.2.1
         autoflake --check --remove-all-unused-imports --remove-unused-variables --expand-star-imports --remove-duplicate-keys $(find referee_stats_fogis tests -name "*.py")
     - name: Test with pytest
       run: |
