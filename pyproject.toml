@@ -25,7 +25,6 @@ classifiers = [
 
 [tool.setuptools]
 packages = ["referee_stats_fogis"]
-exclude = ["migrations*", "tests*"]
 
 [tool.setuptools.package-data]
 referee_stats_fogis = ["**/*.py"]
