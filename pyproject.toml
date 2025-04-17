@@ -25,16 +25,31 @@ classifiers = [
 
 [tool.setuptools]
 packages = ["referee_stats_fogis"]
+exclude = ["migrations*", "tests*"]
+
+[tool.setuptools.package-data]
+referee_stats_fogis = ["**/*.py"]
+
+[tool.setuptools.exclude-package-data]
+referee_stats_fogis = ["migrations/**"]
 
 [project.optional-dependencies]
 dev = [
-    "black",
-    "isort",
-    "flake8",
-    "mypy",
-    "pytest",
-    "pytest-cov",
-    "pre-commit",
+    "black>=24.3.0",
+    "isort>=5.13.2",
+    "flake8>=7.0.0",
+    "flake8-docstrings>=1.7.0",
+    "flake8-quotes>=3.3.2",
+    "flake8-bugbear>=24.2.6",
+    "mypy>=1.8.0",
+    "pytest>=7.4.0",
+    "pytest-cov>=4.1.0",
+    "pre-commit>=3.5.0",
+    "build>=1.0.3",
+    "twine>=4.0.2",
+    "docformatter>=1.7.5",
+    "pyupgrade>=3.15.0",
+    "autoflake>=2.2.1",
 ]
 
 [tool.black]
