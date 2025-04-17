@@ -46,7 +46,7 @@ jobs:
     - name: Check with autoflake
       run: |
         pip install autoflake
-        autoflake --check --remove-all-unused-imports --remove-unused-variables $(find referee_stats_fogis tests -name "*.py")
+        autoflake --check --remove-all-unused-imports --remove-unused-variables --expand-star-imports --remove-duplicate-keys $(find referee_stats_fogis tests -name "*.py")
     - name: Test with pytest
       run: |
         pytest --cov=referee_stats_fogis --cov-report=xml --cov-report=term tests/

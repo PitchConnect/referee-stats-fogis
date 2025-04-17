@@ -4,11 +4,11 @@ import os
 import tempfile
 import unittest
 from datetime import datetime
-from typing import Any, cast
+from typing import Any
 
-import pytest
 from sqlalchemy import create_engine
-from sqlalchemy.orm import Session, sessionmaker
+from sqlalchemy.orm import Session as SQLAlchemySession
+from sqlalchemy.orm import sessionmaker
 
 from referee_stats_fogis.data.base import Base
 from referee_stats_fogis.data.models import (
@@ -37,7 +37,7 @@ class TestDatabaseModels(unittest.TestCase):
     db_fd: int
     db_path: str
     engine: Any
-    session: Session
+    session: SQLAlchemySession
 
     def setUp(self) -> None:
         """Set up test database."""
@@ -46,7 +46,7 @@ class TestDatabaseModels(unittest.TestCase):
         self.engine = create_engine(f"sqlite:///{self.db_path}")
         Base.metadata.create_all(self.engine)
         Session = sessionmaker(bind=self.engine)
-        self.session = cast(Session, Session())
+        self.session = Session()
 
     def tearDown(self) -> None:
         """Clean up test database."""

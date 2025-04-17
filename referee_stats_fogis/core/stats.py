@@ -1,6 +1,6 @@
 """Statistics generation for the referee stats application."""
 
-from typing import Any, Dict, List, Tuple
+from typing import Any
 
 from referee_stats_fogis.data.database import Database
 
