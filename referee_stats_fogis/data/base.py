@@ -1,6 +1,6 @@
 """Base classes for SQLAlchemy models."""
 
-from typing import Any, Dict, Optional, Type, cast
+from typing import Any
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session, declarative_base, sessionmaker
@@ -59,7 +59,6 @@ def get_session() -> Session:
     Returns:
         SQLAlchemy session
     """
-    global _SessionFactory
     if _SessionFactory is None:
         init_db()
     session_factory = _SessionFactory
