@@ -1,9 +1,12 @@
 """Base classes for SQLAlchemy models."""
 
-from typing import Any, Dict, Optional, Type, cast
+from typing import Any
 
 from sqlalchemy import create_engine
-from sqlalchemy.orm import Session, declarative_base, sessionmaker
+
+# Use the ext.declarative import which works across SQLAlchemy versions
+from sqlalchemy.ext.declarative import declarative_base  # type: ignore
+from sqlalchemy.orm import Session, sessionmaker
 
 from referee_stats_fogis.config import config
 
@@ -64,4 +67,6 @@ def get_session() -> Session:
     session_factory = _SessionFactory
     if session_factory is None:
         raise RuntimeError("Session factory is not initialized")
-    return session_factory()
+    # Add explicit type annotation to help mypy
+    session: Session = session_factory()
+    return session
