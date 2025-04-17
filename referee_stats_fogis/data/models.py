@@ -1,8 +1,5 @@
 """Database models for the referee stats application."""
 
-from datetime import datetime
-from typing import List, Optional
-
 from sqlalchemy import (
     Boolean,
     Column,
@@ -206,7 +203,10 @@ class MatchTeam(Base):
 
     def __repr__(self) -> str:
         """Return string representation of the match team."""
-        return f"<MatchTeam(id={self.id}, match_id={self.match_id}, team_id={self.team_id})>"
+        return (
+            f"<MatchTeam(id={self.id}, match_id={self.match_id}, "
+            f"team_id={self.team_id})>"
+        )
 
 
 class ResultType(Base):
