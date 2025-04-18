@@ -3,10 +3,10 @@
 import csv
 import json
 from pathlib import Path
-from typing import Any
+from typing import Any, Optional, Union
 
 
-def read_csv(file_path: str | Path) -> list[dict[str, str]]:
+def read_csv(file_path: Union[str, Path]) -> list[dict[str, str]]:
     """Read a CSV file and return a list of dictionaries.
 
     Args:
@@ -21,9 +21,9 @@ def read_csv(file_path: str | Path) -> list[dict[str, str]]:
 
 
 def write_csv(
-    file_path: str | Path,
+    file_path: Union[str, Path],
     data: list[dict[str, Any]],
-    fieldnames: list[str] | None = None,
+    fieldnames: Optional[list[str]] = None,
 ) -> None:
     """Write a list of dictionaries to a CSV file.
 
@@ -45,7 +45,7 @@ def write_csv(
         writer.writerows(data)
 
 
-def read_json(file_path: str | Path) -> Any:
+def read_json(file_path: Union[str, Path]) -> Any:
     """Read a JSON file and return the parsed data.
 
     Args:
@@ -58,7 +58,7 @@ def read_json(file_path: str | Path) -> Any:
         return json.load(f)
 
 
-def write_json(file_path: str | Path, data: Any, indent: int = 2) -> None:
+def write_json(file_path: Union[str, Path], data: Any, indent: int = 2) -> None:
     """Write data to a JSON file.
 
     Args:

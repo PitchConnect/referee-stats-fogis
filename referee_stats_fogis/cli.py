@@ -4,6 +4,7 @@ import argparse
 import logging
 import sys
 from pathlib import Path
+from typing import List, Optional
 
 from referee_stats_fogis.config import config
 
@@ -129,7 +130,7 @@ def reset_db_command(args: argparse.Namespace) -> int:
     return 0
 
 
-def main(argv: list[str] | None = None) -> int:
+def main(argv: Optional[list[str]] = None) -> int:
     """Main entry point for the application.
 
     Args:

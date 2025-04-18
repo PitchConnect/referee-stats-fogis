@@ -2,6 +2,7 @@
 
 import logging
 from pathlib import Path
+from typing import Union
 
 from referee_stats_fogis.data.database import Database
 from referee_stats_fogis.utils.file_utils import read_csv, read_json
@@ -20,7 +21,7 @@ class DataImporter:
         """
         self.db = db
 
-    def import_from_csv(self, file_path: str | Path) -> int:
+    def import_from_csv(self, file_path: Union[str, Path]) -> int:
         """Import data from a CSV file.
 
         Args:
@@ -41,7 +42,7 @@ class DataImporter:
         logger.info(f"Imported {len(data)} records from CSV file")
         return len(data)
 
-    def import_from_json(self, file_path: str | Path) -> int:
+    def import_from_json(self, file_path: Union[str, Path]) -> int:
         """Import data from a JSON file.
 
         Args:
