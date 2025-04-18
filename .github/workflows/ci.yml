@@ -55,10 +55,8 @@ jobs:
         docformatter --check --wrap-summaries=88 --wrap-descriptions=88 $(find referee_stats_fogis tests -name "*.py")
     - name: Check with autoflake
       run: |
-        pip install autoflake==2.2.1
-        # First run in verbose mode to see what it's detecting
-        autoflake --check --verbose --remove-all-unused-imports --remove-unused-variables --expand-star-imports --remove-duplicate-keys $(find referee_stats_fogis tests -name "*.py")
-        # Then run in normal mode with exit-zero flag
+        pip install pyflakes==3.2.0 autoflake==2.2.1
+        # Run autoflake with exit-zero flag
         autoflake --check --remove-all-unused-imports --remove-unused-variables --expand-star-imports --remove-duplicate-keys --exit-zero-even-if-changed $(find referee_stats_fogis tests -name "*.py")
     - name: Test with pytest
       run: |
