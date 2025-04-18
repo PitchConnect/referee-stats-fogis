@@ -93,8 +93,7 @@ repos:
             --remove-all-unused-imports,
             --remove-unused-variables,
             --expand-star-imports,
-            --remove-duplicate-keys,
-            --exit-zero-even-if-changed
+            --remove-duplicate-keys
         ]
         files: \.py$
         exclude: ^migrations/
