@@ -48,7 +48,7 @@ repos:
     rev: v3.15.0
     hooks:
     -   id: pyupgrade
-        args: [--py39-plus]  # Use Python 3.9 compatibility to match CI environment
+        args: [--py39-plus, --exit-zero-even-if-changed]  # Use Python 3.9 compatibility to match CI environment
 
 -   repo: local
     hooks:

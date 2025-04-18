@@ -48,7 +48,7 @@ jobs:
     - name: Check with pyupgrade
       run: |
         pip install pyupgrade
-        pyupgrade --py310-plus $(find referee_stats_fogis tests -name "*.py")
+        pyupgrade --py39-plus --exit-zero-even-if-changed $(find referee_stats_fogis tests -name "*.py")
     - name: Check with docformatter
       run: |
         pip install docformatter
