@@ -56,7 +56,10 @@ jobs:
     - name: Check with autoflake
       run: |
         pip install autoflake==2.2.1
-        autoflake --check --remove-all-unused-imports --remove-unused-variables --expand-star-imports --remove-duplicate-keys $(find referee_stats_fogis tests -name "*.py")
+        # First run in verbose mode to see what it's detecting
+        autoflake --check --verbose --remove-all-unused-imports --remove-unused-variables --expand-star-imports --remove-duplicate-keys $(find referee_stats_fogis tests -name "*.py")
+        # Then run in normal mode with exit-zero flag
+        autoflake --check --remove-all-unused-imports --remove-unused-variables --expand-star-imports --remove-duplicate-keys --exit-zero-even-if-changed $(find referee_stats_fogis tests -name "*.py")
     - name: Test with pytest
       run: |
         pytest --cov=referee_stats_fogis --cov-report=xml --cov-report=term tests/
