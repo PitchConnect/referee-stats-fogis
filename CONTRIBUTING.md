@@ -66,6 +66,18 @@ This project follows these code style guidelines:
 
 The pre-commit hooks will automatically check and fix many style issues when you commit.
 
+### Important Note About Pre-commit Hooks
+
+Some pre-commit hooks (like autoflake, isort, and black) automatically modify files to fix issues. When this happens, **you must commit these changes** before pushing to the repository. Otherwise, the CI pipeline will fail because it will detect issues that have been fixed locally but not committed.
+
+To avoid this issue:
+
+1. Always run `git status` after a commit to check if any files were modified by pre-commit hooks
+2. If files were modified, commit them with `git commit -m "Apply pre-commit hook fixes"`
+3. Only then push your changes with `git push`
+
+The repository includes a pre-push hook that will prevent you from pushing if there are uncommitted changes, but it's best practice to be aware of this workflow.
+
 ### Docstrings
 
 All modules, classes, and functions should have docstrings. This project follows the [Google style docstrings](https://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_google.html) format.

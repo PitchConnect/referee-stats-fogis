@@ -56,8 +56,17 @@ jobs:
     - name: Check with autoflake
       run: |
         pip install pyflakes==3.2.0 autoflake==2.2.1
-        # Run autoflake with exit-zero flag
-        autoflake --check --remove-all-unused-imports --remove-unused-variables --expand-star-imports --remove-duplicate-keys --exit-zero-even-if-changed $(find referee_stats_fogis tests -name "*.py")
+        # Run autoflake
+        autoflake --check --remove-all-unused-imports --remove-unused-variables --expand-star-imports --remove-duplicate-keys $(find referee_stats_fogis tests -name "*.py")
+
+    - name: Check for uncommitted changes
+      run: |
+        if [[ -n $(git status --porcelain) ]]; then
+          echo "Error: There are uncommitted changes. This usually means that pre-commit hooks have modified files locally but these changes haven't been committed."
+          git status
+          git diff
+          exit 1
+        fi
     - name: Test with pytest
       run: |
         pytest --cov=referee_stats_fogis --cov-report=xml --cov-report=term tests/

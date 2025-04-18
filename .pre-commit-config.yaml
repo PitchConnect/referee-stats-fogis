@@ -1,3 +1,5 @@
+default_stages: [commit, push]
+
 repos:
 -   repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.5.0
@@ -60,6 +62,12 @@ repos:
         files: ^(pyproject\.toml|setup\.py|setup\.cfg)$
         additional_dependencies: [setuptools]
         always_run: true
+    -   id: check-no-staged-changes
+        name: Check no staged changes
+        entry: bash -c 'git diff --staged --quiet || (echo "Error: There are staged changes" && exit 1)'
+        language: system
+        pass_filenames: false
+        stages: [push]
 
 -   repo: local
     hooks:
