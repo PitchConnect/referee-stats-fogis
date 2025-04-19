@@ -2,7 +2,6 @@
 
 import logging
 from pathlib import Path
-from typing import Union
 
 from referee_stats_fogis.data.database import Database
 from referee_stats_fogis.utils.file_utils import read_csv, read_json

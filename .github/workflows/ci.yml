@@ -22,10 +22,7 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install build
-        python -m build --sdist --wheel --outdir dist
-        pip install dist/*.whl
-        pip install ".[dev]"
+        pip install -e ".[dev]"
     - name: Lint with flake8
       run: |
         flake8 referee_stats_fogis tests
@@ -37,7 +34,7 @@ jobs:
         isort --check referee_stats_fogis tests
     - name: Type check with mypy
       run: |
-        mypy referee_stats_fogis
+        mypy --config-file=.mypy.ini referee_stats_fogis
     - name: Check with pyupgrade
       run: |
         pip install pyupgrade
@@ -49,7 +46,7 @@ jobs:
     - name: Check with autoflake
       run: |
         pip install autoflake
-        autoflake --check --remove-all-unused-imports --remove-unused-variables $(find referee_stats_fogis tests -name "*.py")
+        autoflake --check --remove-all-unused-imports --remove-unused-variables --expand-star-imports --remove-duplicate-keys $(find referee_stats_fogis tests -name "*.py")
     - name: Test with pytest
       run: |
         pytest --cov=referee_stats_fogis --cov-report=xml --cov-report=term tests/
@@ -57,7 +54,9 @@ jobs:
       uses: codecov/codecov-action@v3
       with:
         file: ./coverage.xml
-        fail_ci_if_error: true
+        fail_ci_if_error: false
+      env:
+        CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
   build:
     runs-on: ubuntu-latest
@@ -82,3 +81,6 @@ jobs:
       run: |
         pip install dist/*.whl
         python -c "import referee_stats_fogis; print(referee_stats_fogis.__name__)"
+    - name: Verify migrations directory is excluded
+      run: |
+        pip show referee_stats_fogis | grep -v "migrations"

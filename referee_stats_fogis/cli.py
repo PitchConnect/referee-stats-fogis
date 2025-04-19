@@ -4,10 +4,8 @@ import argparse
 import logging
 import sys
 from pathlib import Path
-from typing import List, Optional
 
 from referee_stats_fogis.config import config
-from referee_stats_fogis.data.database import Database
 
 
 def setup_logging() -> None:

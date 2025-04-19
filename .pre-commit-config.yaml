@@ -37,6 +37,7 @@ repos:
         additional_dependencies: [
             'types-requests',
             'types-PyYAML',
+            'sqlalchemy-stubs',
         ]
 
 -   repo: https://github.com/asottile/pyupgrade
@@ -44,17 +45,6 @@ repos:
     hooks:
     -   id: pyupgrade
         args: [--py310-plus]
-
--   repo: local
-    hooks:
-    -   id: check-build
-        name: check-build
-        entry: python -c "import setuptools; print('Setuptools is available');"
-        language: python
-        pass_filenames: false
-        files: ^(pyproject\.toml|setup\.py|setup\.cfg)$
-        additional_dependencies: [setuptools]
-        always_run: true
 
 -   repo: local
     hooks:
@@ -73,5 +63,9 @@ repos:
         args: [
             --remove-all-unused-imports,
             --remove-unused-variables,
-            --in-place
+            --in-place,
+            --expand-star-imports,
+            --remove-duplicate-keys
         ]
+        files: \.py$
+        exclude: ^migrations/

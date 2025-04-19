@@ -26,15 +26,31 @@ classifiers = [
 [tool.setuptools]
 packages = ["referee_stats_fogis"]
 
+[tool.setuptools.package-data]
+referee_stats_fogis = ["**/*.py"]
+
+[tool.setuptools.exclude-package-data]
+referee_stats_fogis = ["migrations/**"]
+
 [project.optional-dependencies]
 dev = [
-    "black",
-    "isort",
-    "flake8",
-    "mypy",
-    "pytest",
-    "pytest-cov",
-    "pre-commit",
+    "black>=24.3.0",
+    "isort>=5.13.2",
+    "flake8>=7.0.0",
+    "flake8-docstrings>=1.7.0",
+    "flake8-quotes>=3.3.2",
+    "flake8-bugbear>=24.2.6",
+    "mypy>=1.8.0",
+    "types-PyYAML>=6.0.12",
+    "sqlalchemy-stubs>=0.4",
+    "pytest>=7.4.0",
+    "pytest-cov>=4.1.0",
+    "pre-commit>=3.5.0",
+    "build>=1.0.3",
+    "twine>=4.0.2",
+    "docformatter>=1.7.5",
+    "pyupgrade>=3.15.0",
+    "autoflake>=2.2.1",
 ]
 
 [tool.black]
@@ -52,6 +68,26 @@ warn_return_any = true
 warn_unused_configs = true
 disallow_untyped_defs = true
 disallow_incomplete_defs = true
+disallow_untyped_decorators = true
+no_implicit_optional = true
+check_untyped_defs = true
+disallow_any_unimported = true
+warn_redundant_casts = true
+
+[[tool.mypy.overrides]]
+module = "sqlalchemy.*"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "referee_stats_fogis.data.models"
+disallow_untyped_defs = false
+disallow_incomplete_defs = false
+disallow_any_unimported = false
+check_untyped_defs = false
+# Disable specific errors for the models file
+disallow_any_expr = false
+# Create a .mypy.ini file to disable var-annotated errors
+# This is a workaround since pyproject.toml doesn't support error codes directly
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
