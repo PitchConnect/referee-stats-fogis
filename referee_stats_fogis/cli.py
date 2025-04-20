@@ -38,8 +38,61 @@ def import_command(args: argparse.Namespace) -> int:
         Exit code
     """
     print(f"Importing data from {args.file}")
-    # Implementation would go here
-    return 0
+
+    if args.dry_run:
+        print("Dry run mode: No changes will be made to the database")
+
+    from referee_stats_fogis.core.importer import DataImporter
+    from referee_stats_fogis.utils.file_utils import read_json, read_csv
+
+    try:
+        # First check if the file exists and can be read
+        if args.file.lower().endswith(".csv"):
+            data = read_csv(args.file)
+            if not data:
+                print("CSV file is empty or could not be parsed")
+                return 1
+        elif args.file.lower().endswith(".json"):
+            data = read_json(args.file)
+            if not data:
+                print("JSON file is empty or could not be parsed")
+                return 1
+        else:
+            print(f"Unsupported file format: {args.file}")
+            print("Supported formats: .csv, .json")
+            return 1
+
+        # If it's a dry run, just print some info about the data
+        if args.dry_run:
+            if args.file.lower().endswith(".csv"):
+                print(f"CSV file contains {len(data)} records")
+                if data and len(data) > 0:
+                    print("Sample fields:", list(data[0].keys()))
+            elif args.file.lower().endswith(".json"):
+                if isinstance(data, list):
+                    print(f"JSON file contains {len(data)} records")
+                    if data and len(data) > 0 and "__type" in data[0]:
+                        print(f"Data type: {data[0]['__type']}")
+                elif isinstance(data, dict):
+                    print("JSON file contains a single record")
+                    if "__type" in data:
+                        print(f"Data type: {data['__type']}")
+            return 0
+
+        # Otherwise, import the data
+        with DataImporter() as importer:
+            if args.file.lower().endswith(".csv"):
+                count = importer.import_from_csv(args.file)
+            elif args.file.lower().endswith(".json"):
+                count = importer.import_from_json(args.file)
+
+            print(f"Successfully imported {count} records")
+            return 0
+    except Exception as e:
+        print(f"Error importing data: {e}")
+        import traceback
+        traceback.print_exc()
+        return 1
 
 
 def stats_command(args: argparse.Namespace) -> int:
@@ -142,8 +195,18 @@ def main(argv: list[str] | None = None) -> int:
     subparsers = parser.add_subparsers(dest="command", help="Command to run")
 
     # Import command
-    import_parser = subparsers.add_parser("import", help="Import data")
-    import_parser.add_argument("file", help="File to import")
+    import_parser = subparsers.add_parser("import", help="Import data from FOGIS")
+    import_parser.add_argument("file", help="File to import (CSV or JSON)")
+    import_parser.add_argument(
+        "--type",
+        choices=["match", "results", "events", "players", "team-staff"],
+        help="Specify the type of data being imported (optional, auto-detected from JSON content)"
+    )
+    import_parser.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="Parse the file but don't modify the database"
+    )
     import_parser.set_defaults(func=import_command)
 
     # Stats command
