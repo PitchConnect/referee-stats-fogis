@@ -2,7 +2,7 @@
 
 import os
 from pathlib import Path
-from typing import Any
+from typing import Any, Dict, Optional, Union
 
 import yaml
 
@@ -10,17 +10,17 @@ import yaml
 class Config:
     """Configuration manager for the application."""
 
-    def __init__(self, config_path: Path | None = None) -> None:
+    def __init__(self, config_path: Optional[Path] = None) -> None:
         """Initialize the configuration manager.
 
         Args:
             config_path: Path to the configuration file. If None, uses default
                 locations.
         """
-        self.config: dict[str, Any] = {}
+        self.config: Dict[str, Any] = {}
         self._load_config(config_path)
 
-    def _load_config(self, config_path: Path | None = None) -> None:
+    def _load_config(self, config_path: Optional[Path] = None) -> None:
         """Load configuration from file.
 
         Args:
@@ -68,7 +68,7 @@ class Config:
                 if local_file_config:
                     self._update_nested_dict(self.config, local_file_config)
 
-    def _update_nested_dict(self, d: dict[str, Any], u: dict[str, Any]) -> None:
+    def _update_nested_dict(self, d: Dict[str, Any], u: Dict[str, Any]) -> None:
         """Update a nested dictionary with another nested dictionary.
 
         Args:
