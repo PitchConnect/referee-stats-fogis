@@ -147,11 +147,15 @@ def test_import_result_json(mock_get_session, sample_result_json):
     # Mock query results - match exists
     mock_match = mock.MagicMock(spec=Match)
     mock_match.id = 1
-    mock_session.query.return_value.filter.return_value.first.side_effect = [
-        mock_match,  # Match query
-        None,        # Result type query
-        None         # Result query
-    ]
+    mock_match.fogis_id = str(sample_result_json["matchid"])
+
+    # Set up the mock to return the match when queried
+    def mock_query_side_effect(*args, **kwargs):
+        mock_filter = mock.MagicMock()
+        mock_filter.first.return_value = mock_match
+        return mock_filter
+
+    mock_session.query.return_value.filter.side_effect = mock_query_side_effect
 
     # Create a temporary JSON file
     with tempfile.NamedTemporaryFile(suffix=".json", delete=False) as temp_file:
