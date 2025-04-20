@@ -16,6 +16,7 @@ from referee_stats_fogis.data.models import (
     Person,
     Referee,
     RefereeAssignment,
+    ResultType,
     Venue,
 )
 
