@@ -470,9 +470,7 @@ class DataImporter:
                 role_id = ref_assignment.get("domarrollid")
 
                 if not referee_id or not person_id or not role_id:
-                    logger.warning(
-                        f"Missing referee data, skipping: {referee_id}"
-                    )
+                    logger.warning(f"Missing referee data, skipping: {referee_id}")
                     continue
 
                 # Get or create person
@@ -824,12 +822,7 @@ class DataImporter:
         participant_id = event_data.get("matchdeltagareid")
         match_team_id = event_data.get("matchlagid")
 
-        if (
-            not match_id
-            or not event_type_id
-            or not participant_id
-            or not match_team_id
-        ):
+        if not match_id or not event_type_id or not participant_id or not match_team_id:
             return False, "Match event data missing required fields, skipping", {}
 
         extracted_data = {
@@ -853,9 +846,7 @@ class DataImporter:
             EventType object
         """
         event_type = (
-            self.session.query(EventType)
-            .filter(EventType.id == event_type_id)
-            .first()
+            self.session.query(EventType).filter(EventType.id == event_type_id).first()
         )
 
         if not event_type:
@@ -878,7 +869,7 @@ class DataImporter:
                 is_penalty=is_penalty,
                 is_card=is_card,
                 is_substitution=is_substitution,
-                affects_score=affects_score
+                affects_score=affects_score,
             )
             self.session.add(event_type)
             self.session.flush()
@@ -901,9 +892,7 @@ class DataImporter:
         """
         # Check if match exists
         match = (
-            self.session.query(Match)
-            .filter(Match.fogis_id == str(match_id))
-            .first()
+            self.session.query(Match).filter(Match.fogis_id == str(match_id)).first()
         )
 
         if not match:
@@ -922,9 +911,7 @@ class DataImporter:
 
         # Check if match team exists
         match_team = (
-            self.session.query(MatchTeam)
-            .filter(MatchTeam.id == match_team_id)
-            .first()
+            self.session.query(MatchTeam).filter(MatchTeam.id == match_team_id).first()
         )
 
         if not match_team:
@@ -991,9 +978,7 @@ class DataImporter:
         existing_event = None
         if event_id:
             existing_event = (
-                self.session.query(MatchEvent)
-                .filter(MatchEvent.id == event_id)
-                .first()
+                self.session.query(MatchEvent).filter(MatchEvent.id == event_id).first()
             )
 
         if existing_event:

@@ -70,7 +70,7 @@ def sample_match_json():
                 "personnamn": "Test Referee",
                 "namn": "Test Referee",
             }
-        ]
+        ],
     }
 
 
@@ -84,7 +84,7 @@ def sample_result_json():
         "matchresultattypid": 1,
         "matchresultattypnamn": "Slutresultat",
         "matchlag1mal": 2,
-        "matchlag2mal": 2
+        "matchlag2mal": 2,
     }
 
 
