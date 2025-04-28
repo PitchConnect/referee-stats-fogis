@@ -2,7 +2,7 @@
 
 import os
 import subprocess
-from typing import List, Optional
+from typing import Any
 
 from referee_stats_fogis.config import config
 from referee_stats_fogis.data.base import get_engine, init_db
@@ -19,7 +19,7 @@ def create_database() -> None:
     init_all()
 
 
-def run_migrations(revision: Optional[str] = None) -> None:
+def run_migrations(revision: str | None = None) -> None:
     """Run database migrations.
 
     Args:
@@ -47,7 +47,7 @@ def create_migration(message: str) -> None:
     print(f"Migration created: {message}")
 
 
-def get_migration_history() -> List[str]:
+def get_migration_history() -> list[str]:
     """Get the migration history.
 
     Returns:

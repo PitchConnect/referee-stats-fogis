@@ -1,11 +1,11 @@
 """Statistics generation for the referee stats application."""
 
-from typing import Any, Dict, List, Tuple
+from typing import Any
 
 from referee_stats_fogis.data.database import Database
 
 
-def get_referee_stats(db: Database, referee_id: int) -> Dict[str, Any]:
+def get_referee_stats(db: Database, referee_id: int) -> dict[str, Any]:
     """Get statistics for a specific referee.
 
     Args:
@@ -93,7 +93,7 @@ def get_match_stats(db: Database, match_id: int) -> dict[str, Any]:
 
 def get_most_common_co_officials(
     db: Database, referee_id: int, limit: int = 5
-) -> List[Tuple[int, int]]:
+) -> list[tuple[int, int]]:
     """Get the most common co-officials for a referee.
 
     Args:
@@ -111,7 +111,7 @@ def get_most_common_co_officials(
 
 def get_most_carded_players(
     db: Database, referee_id: int, limit: int = 5
-) -> List[Tuple[int, int]]:
+) -> list[tuple[int, int]]:
     """Get the players who received the most cards from a referee.
 
     Args:

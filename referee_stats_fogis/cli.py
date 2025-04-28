@@ -4,7 +4,7 @@ import argparse
 import logging
 import sys
 from pathlib import Path
-from typing import Any, Tuple
+from typing import Any
 
 from referee_stats_fogis.config import config
 
@@ -29,7 +29,7 @@ def setup_logging() -> None:
     )
 
 
-def _validate_file(file_path: str) -> Tuple[bool, Any, str]:
+def _validate_file(file_path: str) -> tuple[bool, Any, str]:
     """Validate that the file exists and can be read.
 
     Args:
@@ -210,7 +210,7 @@ def reset_db_command(args: argparse.Namespace) -> int:
     return 0
 
 
-def main(argv: Optional[List[str]] = None) -> int:
+def main(argv: list[str] | None = None) -> int:
     """Main entry point for the application.
 
     Args:
