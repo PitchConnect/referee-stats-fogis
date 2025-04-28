@@ -210,7 +210,7 @@ def reset_db_command(args: argparse.Namespace) -> int:
     return 0
 
 
-def main(argv: list[str] | None = None) -> int:
+def main(argv: Optional[List[str]] = None) -> int:
     """Main entry point for the application.
 
     Args:
