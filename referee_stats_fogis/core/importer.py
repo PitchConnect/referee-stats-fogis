@@ -35,7 +35,7 @@ logger = logging.getLogger(__name__)
 class DataImporter:
     """Data importer for the referee stats application."""
 
-    def __init__(self, session: Optional[Session] = None) -> None:
+    def __init__(self, session: Session | None = None) -> None:
         """Initialize the data importer.
 
         Args:
@@ -53,7 +53,7 @@ class DataImporter:
             self.session.rollback()
         self.session.close()
 
-    def import_from_csv(self, file_path: Union[str, Path]) -> int:
+    def import_from_csv(self, file_path: str | Path) -> int:
         """Import data from a CSV file.
 
         Args:
@@ -74,7 +74,7 @@ class DataImporter:
         logger.info(f"Imported {len(data)} records from CSV file")
         return len(data)
 
-    def _determine_data_type(self, data: Any) -> Tuple[str, Any]:
+    def _determine_data_type(self, data: Any) -> tuple[str, Any]:
         """Determine the type of data and normalize it to a list if needed.
 
         Args:
@@ -101,7 +101,7 @@ class DataImporter:
             logger.warning(f"Unsupported data format: {type(data)}")
             return "", []
 
-    def _process_data_by_type(self, data_type: str, data: List[Dict[str, Any]]) -> int:
+    def _process_data_by_type(self, data_type: str, data: list[dict[str, Any]]) -> int:
         """Process data based on its type.
 
         Args:
@@ -123,7 +123,7 @@ class DataImporter:
             logger.warning(f"Unknown data type: {data_type}")
             return 0
 
-    def import_from_json(self, file_path: Union[str, Path]) -> int:
+    def import_from_json(self, file_path: str | Path) -> int:
         """Import data from a JSON file.
 
         Args:
@@ -155,7 +155,7 @@ class DataImporter:
         logger.info(f"Imported {record_count} records from JSON file")
         return record_count
 
-    def _import_matches(self, data: List[Dict[str, Any]]) -> int:
+    def _import_matches(self, data: list[dict[str, Any]]) -> int:
         """Import match data.
 
         Args:
@@ -249,7 +249,7 @@ class DataImporter:
 
         return imported_count
 
-    def _get_or_create_venue(self, match_data: Dict[str, Any]) -> Optional[Venue]:
+    def _get_or_create_venue(self, match_data: dict[str, Any]) -> Venue | None:
         """Get or create a venue from match data.
 
         Args:
@@ -286,8 +286,8 @@ class DataImporter:
         return venue
 
     def _get_or_create_competition(
-        self, match_data: Dict[str, Any]
-    ) -> Optional[Competition]:
+        self, match_data: dict[str, Any]
+    ) -> Competition | None:
         """Get or create a competition from match data.
 
         Args:
@@ -351,8 +351,8 @@ class DataImporter:
         return competition
 
     def _get_or_create_team(
-        self, match_data: Dict[str, Any], is_home: bool
-    ) -> Optional[Team]:
+        self, match_data: dict[str, Any], is_home: bool
+    ) -> Team | None:
         """Get or create a team from match data.
 
         Args:
@@ -403,7 +403,7 @@ class DataImporter:
         return team
 
     def _create_or_update_match_teams(
-        self, match: Match, home_team: Optional[Team], away_team: Optional[Team]
+        self, match: Match, home_team: Team | None, away_team: Team | None
     ) -> None:
         """Create or update match teams.
 
@@ -455,7 +455,7 @@ class DataImporter:
         self.session.flush()
 
     def _process_referee_assignments(
-        self, match: Match, referee_data: List[Dict[str, Any]]
+        self, match: Match, referee_data: list[dict[str, Any]]
     ) -> None:
         """Process referee assignments.
 
@@ -532,7 +532,7 @@ class DataImporter:
 
         self.session.flush()
 
-    def _get_or_create_person(self, data: Dict[str, Any]) -> Person:
+    def _get_or_create_person(self, data: dict[str, Any]) -> Person:
         """Get or create a person from data.
 
         Args:
@@ -652,8 +652,8 @@ class DataImporter:
         return ""
 
     def _validate_match_result_data(
-        self, result_data: Dict[str, Any]
-    ) -> Tuple[bool, Optional[str], Optional[int], Optional[int]]:
+        self, result_data: dict[str, Any]
+    ) -> tuple[bool, str | None, int | None, int | None]:
         """Validate match result data and extract key fields.
 
         Args:
@@ -672,7 +672,7 @@ class DataImporter:
         return True, None, match_id, result_type_id
 
     def _get_or_create_result_type(
-        self, result_type_id: int, result_data: Dict[str, Any]
+        self, result_type_id: int, result_data: dict[str, Any]
     ) -> ResultType:
         """Get or create a result type.
 
@@ -698,8 +698,8 @@ class DataImporter:
         return result_type
 
     def _find_existing_result(
-        self, result_id: Optional[int], match_id: int, result_type_id: int
-    ) -> Optional[MatchResult]:
+        self, result_id: int | None, match_id: int, result_type_id: int
+    ) -> MatchResult | None:
         """Find an existing match result.
 
         Args:
@@ -732,7 +732,7 @@ class DataImporter:
 
         return existing_result
 
-    def _import_match_results(self, data: List[Dict[str, Any]]) -> int:
+    def _import_match_results(self, data: list[dict[str, Any]]) -> int:
         """Import match results data.
 
         Args:
@@ -807,8 +807,8 @@ class DataImporter:
         return imported_count
 
     def _validate_match_event_data(
-        self, event_data: Dict[str, Any]
-    ) -> Tuple[bool, Optional[str], Dict[str, Any]]:
+        self, event_data: dict[str, Any]
+    ) -> tuple[bool, str | None, dict[str, Any]]:
         """Validate match event data and extract key fields.
 
         Args:
@@ -834,7 +834,7 @@ class DataImporter:
         return True, None, extracted_data
 
     def _get_or_create_event_type(
-        self, event_type_id: int, event_data: Dict[str, Any]
+        self, event_type_id: int, event_data: dict[str, Any]
     ) -> EventType:
         """Get or create an event type.
 
@@ -878,7 +878,7 @@ class DataImporter:
 
     def _check_event_entities(
         self, match_id: int, participant_id: int, match_team_id: int, event_type_id: int
-    ) -> Tuple[bool, Optional[str], Optional[Match]]:
+    ) -> tuple[bool, str | None, Match | None]:
         """Check if all required entities for an event exist.
 
         Args:
@@ -922,7 +922,7 @@ class DataImporter:
 
         return True, None, match
 
-    def _extract_event_details(self, event_data: Dict[str, Any]) -> Dict[str, Any]:
+    def _extract_event_details(self, event_data: dict[str, Any]) -> dict[str, Any]:
         """Extract event details from event data.
 
         Args:
@@ -956,10 +956,10 @@ class DataImporter:
 
     def _create_or_update_event(
         self,
-        event_data: Dict[str, Any],
+        event_data: dict[str, Any],
         match: Match,
-        extracted_data: Dict[str, Any],
-        event_details: Dict[str, Any],
+        extracted_data: dict[str, Any],
+        event_details: dict[str, Any],
     ) -> None:
         """Create or update a match event.
 
@@ -1017,7 +1017,7 @@ class DataImporter:
             )
             self.session.add(new_event)
 
-    def _import_match_events(self, data: List[Dict[str, Any]]) -> int:
+    def _import_match_events(self, data: list[dict[str, Any]]) -> int:
         """Import match events data.
 
         Args:
@@ -1068,7 +1068,7 @@ class DataImporter:
 
         return imported_count
 
-    def _import_match_participants(self, data: List[Dict[str, Any]]) -> int:
+    def _import_match_participants(self, data: list[dict[str, Any]]) -> int:
         """Import match participants data.
 
         Args:
