@@ -9,10 +9,7 @@ import pytest
 from sqlalchemy.orm import Session
 
 from referee_stats_fogis.core.importer import DataImporter
-from referee_stats_fogis.data.models import (
-    Match,
-    ResultType,
-)
+from referee_stats_fogis.data.models import Match, ResultType
 
 
 @pytest.fixture
@@ -28,7 +25,7 @@ def importer(mock_session: mock.MagicMock) -> DataImporter:
 
 
 @pytest.fixture
-def sample_match_json():
+def sample_match_json() -> dict:
     """Sample match JSON data for testing."""
     return {
         "__type": "Svenskfotboll.Fogis.Web.FogisMobilDomarKlient.MatchJSON",
@@ -69,7 +66,7 @@ def sample_match_json():
 
 
 @pytest.fixture
-def sample_result_json():
+def sample_result_json() -> dict:
     """Sample match result JSON data for testing."""
     return {
         "__type": "Svenskfotboll.Fogis.Web.FogisMobilDomarKlient.MatchresultatJSON",
@@ -101,7 +98,9 @@ def test_import_from_csv(importer: DataImporter) -> None:
 
 
 @mock.patch("referee_stats_fogis.core.importer.get_session")
-def test_import_match_json(mock_get_session, sample_match_json):
+def test_import_match_json(
+    mock_get_session: mock.MagicMock, sample_match_json: dict
+) -> None:
     """Test importing match data from JSON."""
     # Create a mock session
     mock_session = mock.MagicMock(spec=Session)
@@ -133,7 +132,9 @@ def test_import_match_json(mock_get_session, sample_match_json):
 
 
 @mock.patch("referee_stats_fogis.core.importer.get_session")
-def test_import_result_json(mock_get_session, sample_result_json):
+def test_import_result_json(
+    mock_get_session: mock.MagicMock, sample_result_json: dict
+) -> None:
     """Test importing match result data from JSON."""
     # Create a mock session
     mock_session = mock.MagicMock(spec=Session)
@@ -145,10 +146,10 @@ def test_import_result_json(mock_get_session, sample_result_json):
     mock_match.fogis_id = str(sample_result_json["matchid"])
 
     # Create different query responses based on the queried class
-    def mock_query_side_effect(queried_class):
+    def mock_query_side_effect(queried_class: type) -> mock.MagicMock:
         mock_query = mock.MagicMock()
 
-        def mock_filter_side_effect(*args, **kwargs):
+        def mock_filter_side_effect(*args: object, **kwargs: object) -> mock.MagicMock:
             mock_filter = mock.MagicMock()
 
             if queried_class == Match:

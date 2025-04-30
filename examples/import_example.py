@@ -1,15 +1,15 @@
 #!/usr/bin/env python
 """Example script demonstrating the data import functionality."""
 
-import os
 import sys
 from pathlib import Path
 
 # Add the parent directory to the Python path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from referee_stats_fogis.core.importer import DataImporter
-from referee_stats_fogis.data.base import get_session
+# Import after path modification
+from referee_stats_fogis.core.importer import DataImporter  # noqa: E402
+from referee_stats_fogis.data.base import get_session  # noqa: E402
 
 
 def import_example_data() -> None:
