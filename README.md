@@ -22,7 +22,7 @@ This project uses a comprehensive set of tools to ensure code quality:
 - **flake8**: Linting
 - **mypy**: Type checking
 - **pytest**: Testing
-- **pre-commit**: Git hooks
+- **pre-commit**: Git hooks (see [Pre-commit Hooks Documentation](docs/pre_commit_hooks.md))
 - **pyupgrade**: Python syntax upgrader
 - **docformatter**: Docstring formatter
 - **autoflake**: Removes unused imports and variables
@@ -62,6 +62,34 @@ mypy .
 ### Pre-commit Hooks and CI Pipeline
 
 This project uses pre-commit hooks and a CI pipeline to ensure code quality. The pre-commit hooks run locally before each commit, while the CI pipeline runs on GitHub Actions for pull requests and pushes to main and develop branches.
+
+#### Installing and Using Pre-commit Hooks
+
+Pre-commit hooks are automatically installed when you run `make dev-install`. You can also install them manually:
+
+```bash
+# Install pre-commit hooks
+make setup-hooks
+
+# Or directly with pre-commit
+pre-commit install
+```
+
+To verify that pre-commit hooks are installed and working correctly:
+
+```bash
+# Verify pre-commit hooks
+make verify-hooks
+
+# Or run directly
+python scripts/verify_hooks.py
+```
+
+To run pre-commit hooks on all files (useful before pushing changes):
+
+```bash
+pre-commit run --all-files
+```
 
 #### Relationship Between Pre-commit Hooks and CI Checks
 
