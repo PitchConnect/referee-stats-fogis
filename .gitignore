@@ -162,4 +162,13 @@ credentials.json
 token.json
 *.pem
 *.key
+
+# Temporary files
 pull_request_description.md
+pr_comment*.md
+pr_description*.md
+pr-description*.md
+issue-description.md
+pre-commit-hooks-issue.md
+changes.diff
+changes.patch
