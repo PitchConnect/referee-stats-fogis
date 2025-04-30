@@ -10,14 +10,8 @@ from sqlalchemy.orm import Session
 
 from referee_stats_fogis.core.importer import DataImporter
 from referee_stats_fogis.data.models import (
-    Competition,
     Match,
-    MatchResult,
-    Person,
-    Referee,
-    RefereeAssignment,
     ResultType,
-    Venue,
 )
 
 

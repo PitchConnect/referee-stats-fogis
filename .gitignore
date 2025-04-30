@@ -162,3 +162,4 @@ credentials.json
 token.json
 *.pem
 *.key
+pull_request_description.md

@@ -1,6 +1,6 @@
 """Base classes for SQLAlchemy models."""
 
-from typing import Any, Optional
+from typing import Any
 
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base

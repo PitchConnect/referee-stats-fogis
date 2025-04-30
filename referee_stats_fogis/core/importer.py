@@ -3,7 +3,7 @@
 import datetime
 import logging
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any
 
 from sqlalchemy.orm import Session
 
@@ -24,7 +24,6 @@ from referee_stats_fogis.data.models import (
     RefereeRole,
     ResultType,
     Team,
-    TeamContact,
     Venue,
 )
 from referee_stats_fogis.utils.file_utils import read_csv, read_json

@@ -11,25 +11,6 @@ from referee_stats_fogis.config import config as app_config
 from referee_stats_fogis.data.base import Base
 
 # Import all models to ensure they're included in the metadata
-from referee_stats_fogis.data.models import (
-    Club,
-    Competition,
-    CompetitionCategory,
-    EventType,
-    Match,
-    MatchEvent,
-    MatchParticipant,
-    MatchResult,
-    MatchTeam,
-    Person,
-    Referee,
-    RefereeAssignment,
-    RefereeRole,
-    ResultType,
-    Team,
-    TeamContact,
-    Venue,
-)
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

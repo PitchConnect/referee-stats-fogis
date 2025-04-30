@@ -2,7 +2,6 @@
 
 import os
 import subprocess
-from typing import Any
 
 from referee_stats_fogis.config import config
 from referee_stats_fogis.data.base import get_engine, init_db
