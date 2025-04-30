@@ -123,6 +123,58 @@ def import_command(args: argparse.Namespace) -> int:
         return 1
 
 
+def _print_list_item(i: int, item: Any) -> None:
+    """Print a list item in a formatted way.
+
+    Args:
+        i: Item index
+        item: The item to print
+    """
+    if isinstance(item, tuple):
+        print(f"  {i}. {item[1]}: {item[2]}")
+    elif isinstance(item, dict):
+        if "name" in item and "matches" in item:
+            print(f"  {i}. {item['name']}: {item['matches']} matches")
+        elif "name" in item and "goals" in item:
+            print(f"  {i}. {item['name']}: {item['goals']} goals")
+        elif "player" in item and "type" in item:
+            print(
+                f"  {i}. {item['player']} ({item['team']}): "
+                f"{item['type']} at {item['minute']}'"
+            )
+        elif "scorer" in item:
+            penalty = " (penalty)" if item.get("is_penalty") else ""
+            print(
+                f"  {i}. {item['scorer']} ({item['team']}): "
+                f"{item['minute']}'{penalty}"
+            )
+        elif "name" in item and "role" in item:
+            print(f"  {i}. {item['name']} ({item['role']})")
+        else:
+            print(f"  {i}. {item}")
+    else:
+        print(f"  {i}. {item}")
+
+
+def _print_stats_text(stats: dict[str, Any]) -> None:
+    """Print statistics in text format.
+
+    Args:
+        stats: Statistics dictionary
+    """
+    print("\nStatistics:")
+    for key, value in stats.items():
+        if isinstance(value, list):
+            print(f"\n{key.replace('_', ' ').title()}:")
+            if not value:
+                print("  None")
+            else:
+                for i, item in enumerate(value, 1):
+                    _print_list_item(i, item)
+        else:
+            print(f"{key.replace('_', ' ').title()}: {value}")
+
+
 def stats_command(args: argparse.Namespace) -> int:
     """Generate statistics.
 
@@ -133,8 +185,50 @@ def stats_command(args: argparse.Namespace) -> int:
         Exit code
     """
     print(f"Generating statistics for {args.type}")
-    # Implementation would go here
-    return 0
+
+    try:
+        import json
+
+        from referee_stats_fogis.core.stats import (
+            get_match_stats,
+            get_player_stats,
+            get_referee_stats,
+            get_team_stats,
+        )
+        from referee_stats_fogis.data.database import Database
+
+        # Create a database connection
+        db = Database()
+
+        # Get the ID
+        entity_id = args.id
+
+        # Generate the appropriate statistics
+        if args.type == "referee":
+            stats = get_referee_stats(db, entity_id)
+        elif args.type == "player":
+            stats = get_player_stats(db, entity_id)
+        elif args.type == "team":
+            stats = get_team_stats(db, entity_id)
+        elif args.type == "match":
+            stats = get_match_stats(db, entity_id)
+        else:
+            print(f"Unknown statistics type: {args.type}")
+            return 1
+
+        # Print the statistics
+        if args.format == "json":
+            print(json.dumps(stats, indent=2))
+        else:  # text format
+            _print_stats_text(stats)
+
+        return 0
+    except Exception as e:
+        print(f"Error generating statistics: {e}")
+        import traceback
+
+        traceback.print_exc()
+        return 1
 
 
 def init_db_command(args: argparse.Namespace) -> int:
@@ -243,6 +337,17 @@ def main(argv: list[str] | None = None) -> int:
         "type",
         choices=["referee", "player", "team", "match"],
         help="Type of statistics to generate",
+    )
+    stats_parser.add_argument(
+        "id",
+        type=int,
+        help="ID of the entity to generate statistics for",
+    )
+    stats_parser.add_argument(
+        "--format",
+        choices=["text", "json"],
+        default="text",
+        help="Output format (default: text)",
     )
     stats_parser.set_defaults(func=stats_command)
 
