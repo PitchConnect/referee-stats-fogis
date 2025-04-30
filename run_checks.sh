@@ -24,12 +24,12 @@ echo "Running mypy..."
 mypy --config-file=.mypy.ini referee_stats_fogis
 
 echo "Running pyupgrade..."
-pyupgrade --py310-plus $(find referee_stats_fogis tests -name "*.py")
+pyupgrade --py310-plus $(find referee_stats_fogis tests migrations -name "*.py")
 
 echo "Running docformatter..."
-docformatter --check --wrap-summaries=88 --wrap-descriptions=88 $(find referee_stats_fogis tests -name "*.py")
+docformatter --check --wrap-summaries=88 --wrap-descriptions=88 $(find referee_stats_fogis tests migrations -name "*.py")
 
 echo "Running autoflake..."
-autoflake --check --remove-all-unused-imports --remove-unused-variables --expand-star-imports --remove-duplicate-keys $(find referee_stats_fogis tests -name "*.py")
+autoflake --check --remove-all-unused-imports --remove-unused-variables --expand-star-imports --remove-duplicate-keys $(find referee_stats_fogis tests migrations -name "*.py")
 
 echo "All checks passed!"
