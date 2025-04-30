@@ -10,7 +10,7 @@ import yaml
 class Config:
     """Configuration manager for the application."""
 
-    def __init__(self, config_path: Path | None = None) -> None:
+    def __init__(self, config_path: Path | str | None = None) -> None:
         """Initialize the configuration manager.
 
         Args:
@@ -20,7 +20,7 @@ class Config:
         self.config: dict[str, Any] = {}
         self._load_config(config_path)
 
-    def _load_config(self, config_path: Path | None = None) -> None:
+    def _load_config(self, config_path: Path | str | None = None) -> None:
         """Load configuration from file.
 
         Args:
@@ -53,7 +53,7 @@ class Config:
         ]
 
         for path in paths_to_try:
-            if path and path.exists():
+            if path and isinstance(path, Path) and path.exists():
                 with open(path) as f:
                     file_config = yaml.safe_load(f)
                     if file_config:
@@ -62,7 +62,7 @@ class Config:
 
         # Check for local config override
         local_config = Path("config.local.yaml")
-        if local_config.exists():
+        if isinstance(local_config, Path) and local_config.exists():
             with open(local_config) as f:
                 local_file_config = yaml.safe_load(f)
                 if local_file_config:
