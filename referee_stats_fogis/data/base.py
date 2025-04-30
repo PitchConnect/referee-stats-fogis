@@ -1,6 +1,6 @@
 """Base classes for SQLAlchemy models."""
 
-from typing import Any, Optional
+from typing import Any
 
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
@@ -15,7 +15,7 @@ Base = declarative_base()
 _SessionFactory = None
 
 
-def get_engine(db_url: Optional[str] = None) -> Any:
+def get_engine(db_url: str | None = None) -> Any:
     """Get a SQLAlchemy engine.
 
     Args:
@@ -42,7 +42,7 @@ def get_engine(db_url: Optional[str] = None) -> Any:
     return create_engine(db_url, echo=config.get("database.echo", False))
 
 
-def init_db(db_url: Optional[str] = None) -> None:
+def init_db(db_url: str | None = None) -> None:
     """Initialize the database.
 
     Args:

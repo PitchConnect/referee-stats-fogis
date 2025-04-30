@@ -1,11 +1,11 @@
 """Statistics generation for the referee stats application."""
 
-from typing import Any, Dict, List, Tuple
+from typing import Any
 
 from referee_stats_fogis.data.database import Database
 
 
-def get_referee_stats(db: Database, referee_id: int) -> Dict[str, Any]:
+def get_referee_stats(db: Database, referee_id: int) -> dict[str, Any]:
     """Get statistics for a specific referee.
 
     Args:
@@ -29,7 +29,7 @@ def get_referee_stats(db: Database, referee_id: int) -> Dict[str, Any]:
 
 def get_most_common_co_officials(
     db: Database, referee_id: int, limit: int = 5
-) -> List[Tuple[int, int]]:
+) -> list[tuple[int, int]]:
     """Get the most common co-officials for a referee.
 
     Args:
@@ -47,7 +47,7 @@ def get_most_common_co_officials(
 
 def get_most_carded_players(
     db: Database, referee_id: int, limit: int = 5
-) -> List[Tuple[int, int]]:
+) -> list[tuple[int, int]]:
     """Get the most carded players for a referee.
 
     Args:
@@ -63,7 +63,7 @@ def get_most_carded_players(
     return []
 
 
-def get_player_stats(db: Database, player_id: int) -> Dict[str, Any]:
+def get_player_stats(db: Database, player_id: int) -> dict[str, Any]:
     """Get statistics for a specific player.
 
     Args:
@@ -83,7 +83,7 @@ def get_player_stats(db: Database, player_id: int) -> Dict[str, Any]:
     }
 
 
-def get_team_stats(db: Database, team_id: int) -> Dict[str, Any]:
+def get_team_stats(db: Database, team_id: int) -> dict[str, Any]:
     """Get statistics for a specific team.
 
     Args:
@@ -105,7 +105,7 @@ def get_team_stats(db: Database, team_id: int) -> Dict[str, Any]:
     }
 
 
-def get_match_stats(db: Database, match_id: int) -> Dict[str, Any]:
+def get_match_stats(db: Database, match_id: int) -> dict[str, Any]:
     """Get statistics for a specific match.
 
     Args:

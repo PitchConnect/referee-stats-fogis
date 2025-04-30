@@ -2,7 +2,7 @@
 
 import sqlite3
 from pathlib import Path
-from typing import Any, Dict, Generic, List, Optional, TypeVar, Union, cast
+from typing import Any, Generic, TypeVar
 
 from referee_stats_fogis.config import config
 from referee_stats_fogis.data.models import Person
@@ -13,7 +13,7 @@ T = TypeVar("T")
 class Database:
     """Database interface for the referee stats application."""
 
-    def __init__(self, db_path: Optional[str] = None) -> None:
+    def __init__(self, db_path: str | None = None) -> None:
         """Initialize the database interface.
 
         Args:
@@ -160,7 +160,7 @@ class Repository(Generic[T]):
         # Implementation would depend on the specific model
         raise NotImplementedError
 
-    def get_by_id(self, entity_id: int) -> Optional[T]:
+    def get_by_id(self, entity_id: int) -> T | None:
         """Get an entity by ID.
 
         Args:
@@ -179,7 +179,7 @@ class Repository(Generic[T]):
             return self._row_to_entity(row)
         return None
 
-    def get_all(self) -> List[T]:
+    def get_all(self) -> list[T]:
         """Get all entities.
 
         Returns:
