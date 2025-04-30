@@ -1,0 +1,36 @@
+{
+  "__type": "Svenskfotboll.Fogis.Web.FogisMobilDomarKlient.MatchJSON",
+  "matchid": 6169913,
+  "matchnr": "000026015",
+  "fotbollstypid": 1,
+  "lag1lagid": 61174,
+  "lag1foreningid": 11145,
+  "lag1namn": "Hestrafors IF",
+  "lag2lagid": 30415,
+  "lag2foreningid": 9528,
+  "lag2namn": "IF Böljan Falkenberg",
+  "anlaggningid": 29424,
+  "anlaggningnamn": "Bollevi Konstgräs",
+  "anlaggningLatitud": 57.71484,
+  "anlaggningLongitud": 12.58732,
+  "speldatum": "2025-04-11",
+  "avsparkstid": "19:00",
+  "tavlingid": 123399,
+  "tavlingnamn": "Div 2 Västra Götaland, herr 2025",
+  "tavlingskategoriid": 728,
+  "tavlingskategorinamn": "Division 2, herrar",
+  "antalaskadare": 246,
+  "domaruppdraglista": [
+    {
+      "domaruppdragid": 6850301,
+      "matchid": 6169913,
+      "domarrollid": 1,
+      "domarrollnamn": "Huvuddomare",
+      "domarrollkortnamn": "Dom",
+      "domareid": 6600,
+      "personid": 1082017,
+      "personnamn": "Test Referee",
+      "namn": "Test Referee"
+    }
+  ]
+}

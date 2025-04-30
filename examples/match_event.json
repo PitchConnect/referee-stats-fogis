@@ -1,0 +1,17 @@
+{
+  "__type": "Svenskfotboll.Fogis.Web.FogisMobilDomarKlient.MatchhandelseJSON",
+  "matchhandelseid": 12345678,
+  "matchid": 6169913,
+  "matchdeltagareid": 87654321,
+  "matchlagid": 61174,
+  "handelsetypid": 6,
+  "handelsetypnamn": "Regular Goal",
+  "minut": 23,
+  "period": 1,
+  "kommentar": "Great shot from outside the box",
+  "hemmamal": 1,
+  "bortamal": 0,
+  "positionx": 75,
+  "positiony": 50,
+  "relaterad_handelse_id": null
+}
