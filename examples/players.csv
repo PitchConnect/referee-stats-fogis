@@ -1,0 +1,4 @@
+personid,fornamn,efternamn,personnr,epostadress,mobiltelefon,adress,postnr,postort,land
+1234567,John,Doe,19900101-1234,john.doe@example.com,0701234567,"Main Street 1",12345,Stockholm,Sweden
+1234568,Jane,Smith,19910202-5678,jane.smith@example.com,0702345678,"Second Street 2",12345,Stockholm,Sweden
+1234569,Bob,Johnson,19920303-9012,bob.johnson@example.com,0703456789,"Third Street 3",12345,Stockholm,Sweden
