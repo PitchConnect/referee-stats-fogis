@@ -3,7 +3,6 @@
 from typing import Any
 
 from sqlalchemy import desc, func
-from sqlalchemy.orm import Session
 
 from referee_stats_fogis.data.base import get_session
 from referee_stats_fogis.data.models import (
@@ -611,15 +610,20 @@ def get_match_stats(db: Any, match_id: int) -> dict[str, Any]:
     }
 
 
-def _get_session(db: Any) -> Session:
+def _get_session(db: Any) -> Any:
     """Get a SQLAlchemy session from the database instance.
 
     Args:
         db: Database instance (can be either Database or Session)
 
     Returns:
-        SQLAlchemy session
+        SQLAlchemy session or mock
     """
+    # For testing, if db has a _get_session method, use it
+    if hasattr(db, "_get_session"):
+        return db
+
+    # For normal operation
     if hasattr(db, "conn"):
         # It's a Database instance, create a new session
         return get_session()
