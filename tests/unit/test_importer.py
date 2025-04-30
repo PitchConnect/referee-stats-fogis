@@ -11,12 +11,7 @@ from sqlalchemy.orm import Session
 
 from referee_stats_fogis.core.importer import DataImporter
 from referee_stats_fogis.data.models import (
-    EventType,
     Match,
-    MatchEvent,
-    MatchParticipant,
-    MatchResult,
-    MatchTeam,
     ResultType,
 )
 
@@ -197,26 +192,26 @@ def test_determine_data_type(importer: DataImporter) -> None:
     assert normalized_data == data
 
     # Test with single item with __type
-    data = {"__type": "SingleType", "value": 1}
-    data_type, normalized_data = importer._determine_data_type(data)
+    data_single = {"__type": "SingleType", "value": 1}
+    data_type, normalized_data = importer._determine_data_type(data_single)
     assert data_type == "SingleType"
-    assert normalized_data == [data]
+    assert normalized_data == [data_single]
 
     # Test with list of items without __type
-    data = [{"value": 1}, {"value": 2}]
-    data_type, normalized_data = importer._determine_data_type(data)
+    data_list = [{"value": 1}, {"value": 2}]
+    data_type, normalized_data = importer._determine_data_type(data_list)
     assert data_type == ""
-    assert normalized_data == data
+    assert normalized_data == data_list
 
     # Test with single item without __type
-    data = {"value": 1}
-    data_type, normalized_data = importer._determine_data_type(data)
+    data_dict = {"value": 1}
+    data_type, normalized_data = importer._determine_data_type(data_dict)
     assert data_type == ""
-    assert normalized_data == [data]
+    assert normalized_data == [data_dict]
 
     # Test with unsupported data format
-    data = "not a dict or list"
-    data_type, normalized_data = importer._determine_data_type(data)
+    data_str = "not a dict or list"
+    data_type, normalized_data = importer._determine_data_type(data_str)
     assert data_type == ""
     assert normalized_data == []
 
@@ -252,11 +247,13 @@ def test_extract_season(importer: DataImporter) -> None:
     assert result == ""
 
 
-def test_validate_match_result_data(importer: DataImporter, sample_result_json: dict) -> None:
+def test_validate_match_result_data(
+    importer: DataImporter, sample_result_json: dict
+) -> None:
     """Test validating match result data."""
     # Test with valid data
-    is_valid, error_message, match_id, result_type_id = importer._validate_match_result_data(
-        sample_result_json
+    is_valid, error_message, match_id, result_type_id = (
+        importer._validate_match_result_data(sample_result_json)
     )
     assert is_valid is True
     assert error_message is None
@@ -266,8 +263,8 @@ def test_validate_match_result_data(importer: DataImporter, sample_result_json: 
     # Test with missing match ID
     invalid_data = sample_result_json.copy()
     del invalid_data["matchid"]
-    is_valid, error_message, match_id, result_type_id = importer._validate_match_result_data(
-        invalid_data
+    is_valid, error_message, match_id, result_type_id = (
+        importer._validate_match_result_data(invalid_data)
     )
     assert is_valid is False
     assert error_message is not None
@@ -277,8 +274,8 @@ def test_validate_match_result_data(importer: DataImporter, sample_result_json: 
     # Test with missing result type ID
     invalid_data = sample_result_json.copy()
     del invalid_data["matchresultattypid"]
-    is_valid, error_message, match_id, result_type_id = importer._validate_match_result_data(
-        invalid_data
+    is_valid, error_message, match_id, result_type_id = (
+        importer._validate_match_result_data(invalid_data)
     )
     assert is_valid is False
     assert error_message is not None
@@ -286,7 +283,9 @@ def test_validate_match_result_data(importer: DataImporter, sample_result_json: 
     assert result_type_id is None
 
 
-def test_validate_match_event_data(importer: DataImporter, sample_event_json: dict) -> None:
+def test_validate_match_event_data(
+    importer: DataImporter, sample_event_json: dict
+) -> None:
     """Test validating match event data."""
     # Test with valid data
     is_valid, error_message, extracted_data = importer._validate_match_event_data(

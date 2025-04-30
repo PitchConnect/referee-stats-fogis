@@ -45,7 +45,9 @@ def get_most_common_co_officials(
     return []
 
 
-def get_most_carded_players(db: Database, referee_id: int, limit: int = 5) -> List[Tuple[int, int]]:
+def get_most_carded_players(
+    db: Database, referee_id: int, limit: int = 5
+) -> List[Tuple[int, int]]:
     """Get the most carded players for a referee.
 
     Args:
@@ -123,4 +125,3 @@ def get_match_stats(db: Database, match_id: int) -> Dict[str, Any]:
         "cards": [],
         "goals": [],
     }
-
