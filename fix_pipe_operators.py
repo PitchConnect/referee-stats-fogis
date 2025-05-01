@@ -10,7 +10,7 @@ import sys
 PIPE_REGEX = r"(\w+(?:\[\w+\])?) *\| *(\w+(?:\[\w+\])?)(?: *\| *(\w+(?:\[\w+\])?))?"
 
 
-def find_python_files(directory: str) -> list[str]:
+def find_python_files(directory: str) -> List[str]:
     """Find all Python files in the given directory and its subdirectories."""
     python_files = []
     for root, _, files in os.walk(directory):
@@ -20,7 +20,7 @@ def find_python_files(directory: str) -> list[str]:
     return python_files
 
 
-def fix_file(file_path: str) -> tuple[int, list[str]]:
+def fix_file(file_path: str) -> Tuple[int, List[str]]:
     """Fix pipe operators in the given file.
 
     Returns:
