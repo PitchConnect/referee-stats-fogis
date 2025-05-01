@@ -1,7 +1,8 @@
 """Tests for statistics generation."""
 
+from typing import Any
 from unittest.mock import MagicMock
-from typing import Any, List, Tuple
+
 import pytest
 
 from referee_stats_fogis.core.stats import (
@@ -22,13 +23,13 @@ class MockTuple(MagicMock):
         super().__init__(*args, **kwargs)
         self.values = kwargs.get("values", [])
 
-    def __iter__(self):
+    def __iter__(self) -> Any:
         return iter(self.values)
 
-    def __getitem__(self, index):
+    def __getitem__(self, index: int) -> Any:
         return self.values[index]
 
-    def __len__(self):
+    def __len__(self) -> int:
         return len(self.values)
 
 
@@ -199,7 +200,7 @@ def test_get_team_stats(mock_db: MagicMock) -> None:
     team_query = MagicMock()
     team_query.filter_by.return_value = team_query
     team_query.first.return_value = MagicMock()
-    query_results['Team'] = team_query
+    query_results["Team"] = team_query
 
     # Mock the match teams query
     match_teams_query = MagicMock()
@@ -211,7 +212,7 @@ def test_get_team_stats(mock_db: MagicMock) -> None:
         MockTuple(values=[4, 104, False]),
         MockTuple(values=[5, 105, True]),
     ]
-    query_results['MatchTeam'] = match_teams_query
+    query_results["MatchTeam"] = match_teams_query
 
     # Mock the match results query
     results_query = MagicMock()
@@ -223,7 +224,7 @@ def test_get_team_stats(mock_db: MagicMock) -> None:
         MockTuple(values=[104, 0, 0]),  # Away draw
         MockTuple(values=[105, 0, 3]),  # Home loss
     ]
-    query_results['MatchResult'] = results_query
+    query_results["MatchResult"] = results_query
 
     # Mock the opponents query
     opponents_query = MagicMock()
@@ -236,7 +237,7 @@ def test_get_team_stats(mock_db: MagicMock) -> None:
         MockTuple(values=[10, "Opponent A", 3]),
         MockTuple(values=[11, "Opponent B", 2]),
     ]
-    query_results['opponents'] = opponents_query
+    query_results["opponents"] = opponents_query
 
     # Mock the top scorers query
     scorers_query = MagicMock()
@@ -249,23 +250,24 @@ def test_get_team_stats(mock_db: MagicMock) -> None:
         MockTuple(values=[201, "Scorer", "One", 3]),
         MockTuple(values=[202, "Scorer", "Two", 2]),
     ]
-    query_results['scorers'] = scorers_query
+    query_results["scorers"] = scorers_query
 
     # Set up the query side effect
     call_count = 0
-    def query_side_effect(*args):
+
+    def query_side_effect(*args: Any) -> Any:
         nonlocal call_count
         call_count += 1
         if call_count == 1:  # First call is for Team
-            return query_results['Team']
+            return query_results["Team"]
         elif call_count == 2:  # Second call is for MatchTeam
-            return query_results['MatchTeam']
+            return query_results["MatchTeam"]
         elif call_count == 3:  # Third call is for MatchResult
-            return query_results['MatchResult']
+            return query_results["MatchResult"]
         elif call_count == 4:  # Fourth call is for opponents
-            return query_results['opponents']
+            return query_results["opponents"]
         else:  # Last call is for scorers
-            return query_results['scorers']
+            return query_results["scorers"]
 
     mock_db.query.side_effect = query_side_effect
 
@@ -296,27 +298,27 @@ def test_get_match_stats(mock_db: MagicMock) -> None:
     match_query = MagicMock()
     match_query.filter_by.return_value = match_query
     match_query.first.return_value = MagicMock()
-    query_results['Match'] = match_query
+    query_results["Match"] = match_query
 
     # Mock the match teams query
     teams_query = MagicMock()
     teams_query.join.return_value = teams_query
     teams_query.filter.return_value = teams_query
     teams_query.all.return_value = [
-        MockTuple(values=[
-            MagicMock(is_home_team=True), MagicMock(name="Home Team", id=1)
-        ]),
-        MockTuple(values=[
-            MagicMock(is_home_team=False), MagicMock(name="Away Team", id=2)
-        ]),
+        MockTuple(
+            values=[MagicMock(is_home_team=True), MagicMock(name="Home Team", id=1)]
+        ),
+        MockTuple(
+            values=[MagicMock(is_home_team=False), MagicMock(name="Away Team", id=2)]
+        ),
     ]
-    query_results['MatchTeam'] = teams_query
+    query_results["MatchTeam"] = teams_query
 
     # Mock the match result query
     result_query = MagicMock()
     result_query.filter.return_value = result_query
     result_query.first.return_value = MagicMock(home_goals=2, away_goals=1)
-    query_results['MatchResult'] = result_query
+    query_results["MatchResult"] = result_query
 
     # Mock the officials query
     officials_query = MagicMock()
@@ -326,7 +328,7 @@ def test_get_match_stats(mock_db: MagicMock) -> None:
         MockTuple(values=[1, "John", "Doe", "Referee"]),
         MockTuple(values=[2, "Jane", "Smith", "Assistant Referee"]),
     ]
-    query_results['officials'] = officials_query
+    query_results["officials"] = officials_query
 
     # Mock the cards query
     cards_query = MagicMock()
@@ -336,7 +338,7 @@ def test_get_match_stats(mock_db: MagicMock) -> None:
         MockTuple(values=[1, "Player", "One", "Home Team", "Yellow Card", 30]),
         MockTuple(values=[2, "Player", "Two", "Away Team", "Red Card", 75]),
     ]
-    query_results['cards'] = cards_query
+    query_results["cards"] = cards_query
 
     # Mock the goals query
     goals_query = MagicMock()
@@ -347,25 +349,26 @@ def test_get_match_stats(mock_db: MagicMock) -> None:
         MockTuple(values=[2, "Scorer", "Two", "Home Team", 60, True]),
         MockTuple(values=[3, "Scorer", "Three", "Away Team", 80, False]),
     ]
-    query_results['goals'] = goals_query
+    query_results["goals"] = goals_query
 
     # Set up the query side effect
     call_count = 0
-    def query_side_effect(*args):
+
+    def query_side_effect(*args: Any) -> Any:
         nonlocal call_count
         call_count += 1
         if call_count == 1:  # First call is for Match
-            return query_results['Match']
+            return query_results["Match"]
         elif call_count == 2:  # Second call is for MatchTeam
-            return query_results['MatchTeam']
+            return query_results["MatchTeam"]
         elif call_count == 3:  # Third call is for MatchResult
-            return query_results['MatchResult']
+            return query_results["MatchResult"]
         elif call_count == 4:  # Fourth call is for officials
-            return query_results['officials']
+            return query_results["officials"]
         elif call_count == 5:  # Fifth call is for cards
-            return query_results['cards']
+            return query_results["cards"]
         else:  # Last call is for goals
-            return query_results['goals']
+            return query_results["goals"]
 
     mock_db.query.side_effect = query_side_effect
 
@@ -554,34 +557,34 @@ def test_get_player_stats_with_data(mock_db: MagicMock) -> None:
     mock_player_query = MagicMock()
     mock_player_query.filter_by.return_value = mock_player_query
     mock_player_query.first.return_value = MagicMock()
-    query_results['Player'] = mock_player_query
+    query_results["Player"] = mock_player_query
 
     # Mock the total matches query
     mock_matches_query = MagicMock()
     mock_matches_query.filter.return_value = mock_matches_query
     mock_matches_query.scalar.return_value = 15
-    query_results['matches_count'] = mock_matches_query
+    query_results["matches_count"] = mock_matches_query
 
     # Mock the goals query
     mock_goals_query = MagicMock()
     mock_goals_query.join.return_value = mock_goals_query
     mock_goals_query.filter.return_value = mock_goals_query
     mock_goals_query.scalar.return_value = 7
-    query_results['goals_count'] = mock_goals_query
+    query_results["goals_count"] = mock_goals_query
 
     # Mock the yellow cards query
     mock_yellow_query = MagicMock()
     mock_yellow_query.join.return_value = mock_yellow_query
     mock_yellow_query.filter.return_value = mock_yellow_query
     mock_yellow_query.scalar.return_value = 3
-    query_results['yellow_cards'] = mock_yellow_query
+    query_results["yellow_cards"] = mock_yellow_query
 
     # Mock the red cards query
     mock_red_query = MagicMock()
     mock_red_query.join.return_value = mock_red_query
     mock_red_query.filter.return_value = mock_red_query
     mock_red_query.scalar.return_value = 1
-    query_results['red_cards'] = mock_red_query
+    query_results["red_cards"] = mock_red_query
 
     # Mock the teams query
     mock_teams_query = MagicMock()
@@ -591,27 +594,28 @@ def test_get_player_stats_with_data(mock_db: MagicMock) -> None:
     mock_teams_query.order_by.return_value = mock_teams_query
     mock_teams_query.all.return_value = [
         MockTuple(values=[1, "Team A", 10]),
-        MockTuple(values=[2, "Team B", 5])
+        MockTuple(values=[2, "Team B", 5]),
     ]
-    query_results['teams'] = mock_teams_query
+    query_results["teams"] = mock_teams_query
 
     # Set up the query side effect
     call_count = 0
-    def query_side_effect(*args):
+
+    def query_side_effect(*args: Any) -> Any:
         nonlocal call_count
         call_count += 1
         if call_count == 1:  # First call is for Player
-            return query_results['Player']
+            return query_results["Player"]
         elif call_count == 2:  # Second call is for match count
-            return query_results['matches_count']
+            return query_results["matches_count"]
         elif call_count == 3:  # Third call is for goals
-            return query_results['goals_count']
+            return query_results["goals_count"]
         elif call_count == 4:  # Fourth call is for yellow cards
-            return query_results['yellow_cards']
+            return query_results["yellow_cards"]
         elif call_count == 5:  # Fifth call is for red cards
-            return query_results['red_cards']
+            return query_results["red_cards"]
         else:  # Last call is for teams
-            return query_results['teams']
+            return query_results["teams"]
 
     mock_db.query.side_effect = query_side_effect
 
@@ -646,7 +650,7 @@ def test_get_team_stats_with_data(mock_db: MagicMock) -> None:
     mock_team_query = MagicMock()
     mock_team_query.filter_by.return_value = mock_team_query
     mock_team_query.first.return_value = MagicMock()
-    query_results['Team'] = mock_team_query
+    query_results["Team"] = mock_team_query
 
     # Mock the match teams query
     mock_match_teams_query = MagicMock()
@@ -658,7 +662,7 @@ def test_get_team_stats_with_data(mock_db: MagicMock) -> None:
         MockTuple(values=[4, 104, False]),
         MockTuple(values=[5, 105, True]),
     ]
-    query_results['MatchTeam'] = mock_match_teams_query
+    query_results["MatchTeam"] = mock_match_teams_query
 
     # Mock the match results query
     mock_results_query = MagicMock()
@@ -670,7 +674,7 @@ def test_get_team_stats_with_data(mock_db: MagicMock) -> None:
         MockTuple(values=[104, 0, 0]),  # Away draw
         MockTuple(values=[105, 0, 3]),  # Home loss
     ]
-    query_results['MatchResult'] = mock_results_query
+    query_results["MatchResult"] = mock_results_query
 
     # Mock the opponents query
     mock_opponents_query = MagicMock()
@@ -683,7 +687,7 @@ def test_get_team_stats_with_data(mock_db: MagicMock) -> None:
         MockTuple(values=[10, "Opponent A", 3]),
         MockTuple(values=[11, "Opponent B", 2]),
     ]
-    query_results['opponents'] = mock_opponents_query
+    query_results["opponents"] = mock_opponents_query
 
     # Mock the top scorers query
     mock_scorers_query = MagicMock()
@@ -696,23 +700,24 @@ def test_get_team_stats_with_data(mock_db: MagicMock) -> None:
         MockTuple(values=[201, "Scorer", "One", 3]),
         MockTuple(values=[202, "Scorer", "Two", 2]),
     ]
-    query_results['scorers'] = mock_scorers_query
+    query_results["scorers"] = mock_scorers_query
 
     # Set up the query side effect
     call_count = 0
-    def query_side_effect(*args):
+
+    def query_side_effect(*args: Any) -> Any:
         nonlocal call_count
         call_count += 1
         if call_count == 1:  # First call is for Team
-            return query_results['Team']
+            return query_results["Team"]
         elif call_count == 2:  # Second call is for MatchTeam
-            return query_results['MatchTeam']
+            return query_results["MatchTeam"]
         elif call_count == 3:  # Third call is for MatchResult
-            return query_results['MatchResult']
+            return query_results["MatchResult"]
         elif call_count == 4:  # Fourth call is for opponents
-            return query_results['opponents']
+            return query_results["opponents"]
         else:  # Last call is for scorers
-            return query_results['scorers']
+            return query_results["scorers"]
 
     mock_db.query.side_effect = query_side_effect
 
@@ -750,27 +755,27 @@ def test_get_match_stats_with_data(mock_db: MagicMock) -> None:
     mock_match_query = MagicMock()
     mock_match_query.filter_by.return_value = mock_match_query
     mock_match_query.first.return_value = MagicMock()
-    query_results['Match'] = mock_match_query
+    query_results["Match"] = mock_match_query
 
     # Mock the match teams query
     mock_teams_query = MagicMock()
     mock_teams_query.join.return_value = mock_teams_query
     mock_teams_query.filter.return_value = mock_teams_query
     mock_teams_query.all.return_value = [
-        MockTuple(values=[
-            MagicMock(is_home_team=True), MagicMock(name="Home Team", id=1)
-        ]),
-        MockTuple(values=[
-            MagicMock(is_home_team=False), MagicMock(name="Away Team", id=2)
-        ]),
+        MockTuple(
+            values=[MagicMock(is_home_team=True), MagicMock(name="Home Team", id=1)]
+        ),
+        MockTuple(
+            values=[MagicMock(is_home_team=False), MagicMock(name="Away Team", id=2)]
+        ),
     ]
-    query_results['MatchTeam'] = mock_teams_query
+    query_results["MatchTeam"] = mock_teams_query
 
     # Mock the match result query
     mock_result_query = MagicMock()
     mock_result_query.filter.return_value = mock_result_query
     mock_result_query.first.return_value = MagicMock(home_goals=2, away_goals=1)
-    query_results['MatchResult'] = mock_result_query
+    query_results["MatchResult"] = mock_result_query
 
     # Mock the officials query
     mock_officials_query = MagicMock()
@@ -780,7 +785,7 @@ def test_get_match_stats_with_data(mock_db: MagicMock) -> None:
         MockTuple(values=[1, "John", "Doe", "Referee"]),
         MockTuple(values=[2, "Jane", "Smith", "Assistant Referee"]),
     ]
-    query_results['officials'] = mock_officials_query
+    query_results["officials"] = mock_officials_query
 
     # Mock the cards query
     mock_cards_query = MagicMock()
@@ -790,7 +795,7 @@ def test_get_match_stats_with_data(mock_db: MagicMock) -> None:
         MockTuple(values=[1, "Player", "One", "Home Team", "Yellow Card", 30]),
         MockTuple(values=[2, "Player", "Two", "Away Team", "Red Card", 75]),
     ]
-    query_results['cards'] = mock_cards_query
+    query_results["cards"] = mock_cards_query
 
     # Mock the goals query
     mock_goals_query = MagicMock()
@@ -801,25 +806,26 @@ def test_get_match_stats_with_data(mock_db: MagicMock) -> None:
         MockTuple(values=[2, "Scorer", "Two", "Home Team", 60, True]),
         MockTuple(values=[3, "Scorer", "Three", "Away Team", 80, False]),
     ]
-    query_results['goals'] = mock_goals_query
+    query_results["goals"] = mock_goals_query
 
     # Set up the query side effect
     call_count = 0
-    def query_side_effect(*args):
+
+    def query_side_effect(*args: Any) -> Any:
         nonlocal call_count
         call_count += 1
         if call_count == 1:  # First call is for Match
-            return query_results['Match']
+            return query_results["Match"]
         elif call_count == 2:  # Second call is for MatchTeam
-            return query_results['MatchTeam']
+            return query_results["MatchTeam"]
         elif call_count == 3:  # Third call is for MatchResult
-            return query_results['MatchResult']
+            return query_results["MatchResult"]
         elif call_count == 4:  # Fourth call is for officials
-            return query_results['officials']
+            return query_results["officials"]
         elif call_count == 5:  # Fifth call is for cards
-            return query_results['cards']
+            return query_results["cards"]
         else:  # Last call is for goals
-            return query_results['goals']
+            return query_results["goals"]
 
     mock_db.query.side_effect = query_side_effect
 
