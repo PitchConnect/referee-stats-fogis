@@ -6,12 +6,17 @@
 
 A tool to track and analyze referee statistics from FOGIS.
 
-## Features (Planned)
+## Features
 
-- Fetch all matches refereed
-- Track statistics about co-referees, players, cards, goals, etc.
-- Generate reports and insights
 - Import data from FOGIS (see [Data Import Documentation](docs/data_import.md))
+- Comprehensive statistics for referees, players, teams, and matches (see [Statistics Documentation](docs/statistics.md))
+- Track statistics about co-referees, players, cards, goals, etc.
+
+### Planned Features
+
+- Generate reports and insights
+- Interactive dashboards
+- Export data to various formats
 
 ## Development
 
