@@ -4,14 +4,13 @@
 import os
 import re
 import sys
-from typing import List, Tuple
 
 # Regular expression to match type annotations with pipe operators
 # This regex looks for type annotations like "Type1 | Type2" or "Type1 | Type2 | None"
 PIPE_REGEX = r"(\w+(?:\[\w+\])?) *\| *(\w+(?:\[\w+\])?)(?: *\| *(\w+(?:\[\w+\])?))?"
 
 
-def find_python_files(directory: str) -> List[str]:
+def find_python_files(directory: str) -> list[str]:
     """Find all Python files in the given directory and its subdirectories."""
     python_files = []
     for root, _, files in os.walk(directory):
@@ -21,7 +20,7 @@ def find_python_files(directory: str) -> List[str]:
     return python_files
 
 
-def fix_file(file_path: str) -> Tuple[int, List[str]]:
+def fix_file(file_path: str) -> tuple[int, list[str]]:
     """Fix pipe operators in the given file.
 
     Returns:

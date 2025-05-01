@@ -2,7 +2,7 @@
 
 import os
 from pathlib import Path
-from typing import Any, Dict, Optional, Union
+from typing import Any
 
 import yaml
 
@@ -10,17 +10,17 @@ import yaml
 class Config:
     """Configuration manager for the application."""
 
-    def __init__(self, config_path: Optional[Union[Path, str]] = None) -> None:
+    def __init__(self, config_path: Path | str | None = None) -> None:
         """Initialize the configuration manager.
 
         Args:
             config_path: Path to the configuration file. If None, uses default
                 locations.
         """
-        self.config: Dict[str, Any] = {}
+        self.config: dict[str, Any] = {}
         self._load_config(config_path)
 
-    def _load_config(self, config_path: Optional[Union[Path, str]] = None) -> None:
+    def _load_config(self, config_path: Path | str | None = None) -> None:
         """Load configuration from file.
 
         Args:
