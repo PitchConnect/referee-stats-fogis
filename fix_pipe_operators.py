@@ -4,6 +4,7 @@
 import os
 import re
 import sys
+from typing import List, Tuple
 
 # Regular expression to match type annotations with pipe operators
 # This regex looks for type annotations like "Type1 | Type2" or "Type1 | Type2 | None"
