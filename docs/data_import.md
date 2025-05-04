@@ -214,6 +214,18 @@ The application provides detailed error messages when importing data. Here are s
 - `Warning: Match ID 6169913 not found, skipping result`
   - The match referenced by a result doesn't exist in the database.
 
+### Detailed Troubleshooting
+
+For a comprehensive guide to troubleshooting data import issues, including:
+
+- Step-by-step debugging approaches
+- Examples of log output for common error scenarios
+- Solutions for data validation issues
+- Database consistency checks
+- Common pitfalls when importing data from FOGIS
+
+Please refer to the [Data Import Troubleshooting Guide](data_import_troubleshooting.md).
+
 ## Programmatic Usage
 
 You can also use the import functionality programmatically in your Python code:
@@ -247,7 +259,28 @@ with DataImporter(session=session) as importer:
    - Match events
 
 3. **Back Up Your Database**: Always back up your database before importing large amounts of data.
+   ```bash
+   # Backup the SQLite database
+   cp ~/.local/share/referee-stats-fogis/database.sqlite ~/.local/share/referee-stats-fogis/database.sqlite.backup
+   ```
 
 4. **Check Logs**: Check the application logs for warnings and errors during import.
+   ```bash
+   # View the most recent log file
+   tail -f ~/.local/share/referee-stats-fogis/logs/referee-stats-fogis.log
+   ```
 
 5. **Validate Data**: Ensure your data is valid and complete before importing it.
+   - Use JSON validators for JSON files
+   - Use CSV validators for CSV files
+   - Check for required fields
+
+6. **Import in Small Batches**: For large datasets, import in smaller batches to make troubleshooting easier.
+
+7. **Verify Database Consistency**: After importing, run consistency checks to ensure all references are valid.
+   ```bash
+   # Example: Check for orphaned match results
+   referee-stats-fogis db-check --orphaned-results
+   ```
+
+8. **Document Import Process**: Keep track of what you've imported and any issues encountered for future reference.
