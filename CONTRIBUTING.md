@@ -11,7 +11,7 @@ Thank you for considering contributing to Referee Stats FOGIS! This document pro
    - Windows: `.venv\Scripts\activate`
    - Unix/MacOS: `source .venv/bin/activate`
 5. Install development dependencies: `make dev-install` or `pip install -e ".[dev]"`
-6. Install pre-commit hooks: `pre-commit install`
+6. Install pre-commit hooks: `make setup-hooks` or `pre-commit install`
 
 ## Git Workflow (Gitflow)
 
@@ -64,7 +64,7 @@ This project follows these code style guidelines:
 - [flake8](https://flake8.pycqa.org/en/latest/) for linting
 - [mypy](https://mypy.readthedocs.io/en/stable/) for type checking
 
-The pre-commit hooks will automatically check and fix many style issues when you commit.
+The pre-commit hooks will automatically check and fix many style issues when you commit. You can also run the hooks manually with `make verify-hooks` or `pre-commit run --all-files`.
 
 ### Docstrings
 
@@ -151,6 +151,11 @@ Please update the documentation when adding or modifying features. Documentation
 3. **Issue Updates**:
    - Provide regular updates on issues you're working on
    - If you encounter blockers, document them in the issue
+
+4. **Issue Creation**:
+   - When creating new issues, include a reference to CONTRIBUTING.md
+   - Add a note like: "Please follow the guidelines in [CONTRIBUTING.md](../CONTRIBUTING.md) when working on this issue"
+   - This ensures all contributors are aware of the project's contribution guidelines
 
 ## Guidelines for AI Agents
 

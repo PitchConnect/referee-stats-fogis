@@ -6,7 +6,9 @@ max-line-length = 88
 # F401: Module imported but unused (useful for __init__.py files)
 # F541: f-string without any placeholders (allows for future string interpolation)
 # E231: Missing whitespace after ',', ';', or ':' (conflicts with Black in some cases)
+# F824: Unused global variable (explicitly enabled to catch issues like unused global declarations)
 extend-ignore = E203, W503, Q000, F401, F541, E231
+select = E,F,W,C,B,D,Q
 exclude = .git,__pycache__,build,dist,.venv
 per-file-ignores =
     __init__.py:F401

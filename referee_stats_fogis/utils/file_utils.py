@@ -3,7 +3,7 @@
 import csv
 import json
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Union
+from typing import Any
 
 
 def read_csv(file_path: str | Path) -> list[dict[str, str]]:

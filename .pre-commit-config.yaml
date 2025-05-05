@@ -14,6 +14,7 @@ repos:
     rev: 24.3.0
     hooks:
     -   id: black
+        args: [--preview]  # More aggressive line breaking
 
 -   repo: https://github.com/pycqa/isort
     rev: 5.13.2
@@ -36,6 +37,7 @@ repos:
         additional_dependencies: [
             'types-requests',
             'types-PyYAML',
+            'sqlalchemy-stubs',
         ]
 
 -   repo: https://github.com/asottile/pyupgrade
@@ -43,3 +45,24 @@ repos:
     hooks:
     -   id: pyupgrade
         args: [--py310-plus]
+
+# Temporarily disabled due to installation issues
+# -   repo: https://github.com/PyCQA/docformatter
+#     rev: v1.7.5
+#     hooks:
+#     -   id: docformatter
+#         args: [--wrap-summaries=88, --wrap-descriptions=88, --in-place]
+
+-   repo: https://github.com/PyCQA/autoflake
+    rev: v2.2.1
+    hooks:
+    -   id: autoflake
+        args: [
+            --remove-all-unused-imports,
+            --remove-unused-variables,
+            --in-place,
+            --expand-star-imports,
+            --remove-duplicate-keys
+        ]
+        files: \.py$
+        exclude: ^migrations/
