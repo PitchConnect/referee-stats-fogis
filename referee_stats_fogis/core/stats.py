@@ -46,59 +46,51 @@ def get_referee_stats(db: Any, referee_id: int) -> dict[str, Any]:
             "most_carded_players": [],
         }
 
-    # Get total matches
-    total_matches = (
-        session.query(func.count(RefereeAssignment.id))
-        .filter(RefereeAssignment.referee_id == referee_id)
-        .scalar()
-        or 0
-    )
-
-    # Get matches refereed
-    match_ids = (
+    # Get matches refereed as a subquery for reuse
+    referee_matches = (
         session.query(RefereeAssignment.match_id)
         .filter(RefereeAssignment.referee_id == referee_id)
-        .all()
-    )
-    match_ids_list = [m[0] for m in match_ids]
-
-    # Get yellow cards
-    yellow_cards = (
-        session.query(func.count(MatchEvent.id))
-        .join(EventType, MatchEvent.event_type_id == EventType.id)
-        .filter(
-            MatchEvent.match_id.in_(match_ids_list),
-            EventType.is_card.is_(True),
-            EventType.name.like("%Yellow%"),
-        )
-        .scalar()
-        or 0
+        .subquery()
     )
 
-    # Get red cards
-    red_cards = (
-        session.query(func.count(MatchEvent.id))
-        .join(EventType, MatchEvent.event_type_id == EventType.id)
-        .filter(
-            MatchEvent.match_id.in_(match_ids_list),
-            EventType.is_card.is_(True),
-            EventType.name.like("%Red%"),
+    # Use a single query with conditional aggregation to get all counts
+    stats = (
+        session.query(
+            func.count(func.distinct(Match.id)).label("total_matches"),
+            func.sum(
+                func.case(
+                    [
+                        (
+                            EventType.is_card.is_(True)
+                            & EventType.name.like("%Yellow%"),
+                            1,
+                        )
+                    ],
+                    else_=0,
+                )
+            ).label("yellow_cards"),
+            func.sum(
+                func.case(
+                    [(EventType.is_card.is_(True) & EventType.name.like("%Red%"), 1)],
+                    else_=0,
+                )
+            ).label("red_cards"),
+            func.sum(func.case([(EventType.is_goal.is_(True), 1)], else_=0)).label(
+                "goals"
+            ),
         )
-        .scalar()
-        or 0
+        .select_from(Match)
+        .join(referee_matches, Match.id == referee_matches.c.match_id)
+        .outerjoin(MatchEvent, Match.id == MatchEvent.match_id)
+        .outerjoin(EventType, MatchEvent.event_type_id == EventType.id)
+        .first()
     )
 
-    # Get goals
-    goals = (
-        session.query(func.count(MatchEvent.id))
-        .join(EventType, MatchEvent.event_type_id == EventType.id)
-        .filter(
-            MatchEvent.match_id.in_(match_ids_list),
-            EventType.is_goal.is_(True),
-        )
-        .scalar()
-        or 0
-    )
+    # Extract values from the result, defaulting to 0 if None
+    total_matches = stats[0] or 0
+    yellow_cards = stats[1] or 0
+    red_cards = stats[2] or 0
+    goals = stats[3] or 0
 
     return {
         "total_matches": total_matches,
@@ -111,7 +103,7 @@ def get_referee_stats(db: Any, referee_id: int) -> dict[str, Any]:
 
 
 def get_most_common_co_officials(
-    db: Any, referee_id: int, limit: int = 5
+    db: Any, referee_id: int, limit: int = 5, offset: int = 0
 ) -> list[tuple[int, str, int]]:
     """Get the most common co-officials for a referee.
 
@@ -119,6 +111,7 @@ def get_most_common_co_officials(
         db: Database instance (can be either Database or Session)
         referee_id: ID of the referee
         limit: Maximum number of co-officials to return
+        offset: Number of co-officials to skip
 
     Returns:
         List of tuples containing (official_id, official_name, count)
@@ -149,6 +142,7 @@ def get_most_common_co_officials(
         )
         .group_by(Referee.id)
         .order_by(desc("count"))
+        .offset(offset)
         .limit(limit)
         .all()
     )
@@ -158,7 +152,7 @@ def get_most_common_co_officials(
 
 
 def get_most_carded_players(
-    db: Any, referee_id: int, limit: int = 5
+    db: Any, referee_id: int, limit: int = 5, offset: int = 0
 ) -> list[tuple[int, str, int]]:
     """Get the most carded players for a referee.
 
@@ -166,6 +160,7 @@ def get_most_carded_players(
         db: Database instance (can be either Database or Session)
         referee_id: ID of the referee
         limit: Maximum number of players to return
+        offset: Number of players to skip
 
     Returns:
         List of tuples containing (player_id, player_name, card_count)
@@ -197,6 +192,7 @@ def get_most_carded_players(
         )
         .group_by(Person.id)
         .order_by(desc("card_count"))
+        .offset(offset)
         .limit(limit)
         .all()
     )
@@ -205,12 +201,16 @@ def get_most_carded_players(
     return [(p[0], f"{p[1]} {p[2]}", p[3]) for p in carded_players]
 
 
-def get_player_stats(db: Any, player_id: int) -> dict[str, Any]:
+def get_player_stats(
+    db: Any, player_id: int, team_limit: int = 5, team_offset: int = 0
+) -> dict[str, Any]:
     """Get statistics for a specific player.
 
     Args:
         db: Database instance (can be either Database or Session)
         player_id: ID of the player
+        team_limit: Maximum number of teams to return
+        team_offset: Number of teams to skip
 
     Returns:
         Dictionary of statistics
@@ -230,56 +230,49 @@ def get_player_stats(db: Any, player_id: int) -> dict[str, Any]:
             "teams": [],
         }
 
-    # Get total matches
-    total_matches = (
-        session.query(func.count(MatchParticipant.id))
+    # No need to create a separate subquery for player's match participations
+    # as we can filter directly in the main query
+
+    # Use a single query with conditional aggregation to get all counts
+    stats = (
+        session.query(
+            func.count(func.distinct(MatchParticipant.id)).label("total_matches"),
+            func.sum(func.case([(EventType.is_goal.is_(True), 1)], else_=0)).label(
+                "goals"
+            ),
+            func.sum(
+                func.case(
+                    [
+                        (
+                            EventType.is_card.is_(True)
+                            & EventType.name.like("%Yellow%"),
+                            1,
+                        )
+                    ],
+                    else_=0,
+                )
+            ).label("yellow_cards"),
+            func.sum(
+                func.case(
+                    [(EventType.is_card.is_(True) & EventType.name.like("%Red%"), 1)],
+                    else_=0,
+                )
+            ).label("red_cards"),
+        )
+        .select_from(MatchParticipant)
+        .outerjoin(MatchEvent, MatchParticipant.id == MatchEvent.participant_id)
+        .outerjoin(EventType, MatchEvent.event_type_id == EventType.id)
         .filter(MatchParticipant.player_id == player_id)
-        .scalar()
-        or 0
+        .first()
     )
 
-    # Get goals
-    goals = (
-        session.query(func.count(MatchEvent.id))
-        .join(MatchParticipant, MatchEvent.participant_id == MatchParticipant.id)
-        .join(EventType, MatchEvent.event_type_id == EventType.id)
-        .filter(
-            MatchParticipant.player_id == player_id,
-            EventType.is_goal.is_(True),
-        )
-        .scalar()
-        or 0
-    )
+    # Extract values from the result, defaulting to 0 if None
+    total_matches = stats[0] or 0
+    goals = stats[1] or 0
+    yellow_cards = stats[2] or 0
+    red_cards = stats[3] or 0
 
-    # Get yellow cards
-    yellow_cards = (
-        session.query(func.count(MatchEvent.id))
-        .join(MatchParticipant, MatchEvent.participant_id == MatchParticipant.id)
-        .join(EventType, MatchEvent.event_type_id == EventType.id)
-        .filter(
-            MatchParticipant.player_id == player_id,
-            EventType.is_card.is_(True),
-            EventType.name.like("%Yellow%"),
-        )
-        .scalar()
-        or 0
-    )
-
-    # Get red cards
-    red_cards = (
-        session.query(func.count(MatchEvent.id))
-        .join(MatchParticipant, MatchEvent.participant_id == MatchParticipant.id)
-        .join(EventType, MatchEvent.event_type_id == EventType.id)
-        .filter(
-            MatchParticipant.player_id == player_id,
-            EventType.is_card.is_(True),
-            EventType.name.like("%Red%"),
-        )
-        .scalar()
-        or 0
-    )
-
-    # Get teams the player has played for
+    # Get teams the player has played for with pagination
     teams = (
         session.query(
             Team.id, Team.name, func.count(MatchParticipant.id).label("matches")
@@ -289,6 +282,8 @@ def get_player_stats(db: Any, player_id: int) -> dict[str, Any]:
         .filter(MatchParticipant.player_id == player_id)
         .group_by(Team.id)
         .order_by(desc("matches"))
+        .offset(team_offset)
+        .limit(team_limit)
         .all()
     )
 
@@ -304,12 +299,23 @@ def get_player_stats(db: Any, player_id: int) -> dict[str, Any]:
     }
 
 
-def get_team_stats(db: Any, team_id: int) -> dict[str, Any]:
+def get_team_stats(
+    db: Any,
+    team_id: int,
+    opponent_limit: int = 5,
+    opponent_offset: int = 0,
+    scorer_limit: int = 5,
+    scorer_offset: int = 0,
+) -> dict[str, Any]:
     """Get statistics for a specific team.
 
     Args:
         db: Database instance (can be either Database or Session)
         team_id: ID of the team
+        opponent_limit: Maximum number of opponents to return
+        opponent_offset: Number of opponents to skip
+        scorer_limit: Maximum number of scorers to return
+        scorer_offset: Number of scorers to skip
 
     Returns:
         Dictionary of statistics
@@ -332,45 +338,33 @@ def get_team_stats(db: Any, team_id: int) -> dict[str, Any]:
             "top_scorers": [],
         }
 
-    # Get match teams for this team
-    match_teams = (
+    # Get match teams for this team as a subquery for reuse
+    team_matches = (
         session.query(MatchTeam.id, MatchTeam.match_id, MatchTeam.is_home_team)
         .filter(MatchTeam.team_id == team_id)
-        .all()
+        .subquery()
     )
 
-    # Get match IDs
-    match_ids = [mt[1] for mt in match_teams]
-    match_team_ids = [mt[0] for mt in match_teams]
-
-    # Create a mapping of match_id to is_home_team
-    is_home_team_map = {mt[1]: mt[2] for mt in match_teams}
-
-    # Get total matches
-    total_matches = len(match_ids)
-
-    # Get match results
+    # Get match results with a join to the team_matches subquery
     match_results = (
         session.query(
-            MatchResult.match_id,
+            team_matches.c.is_home_team,
             MatchResult.home_goals,
             MatchResult.away_goals,
         )
-        .filter(MatchResult.match_id.in_(match_ids))
+        .join(MatchResult, team_matches.c.match_id == MatchResult.match_id)
         .all()
     )
 
     # Calculate wins, draws, losses, goals for, goals against
+    total_matches = len(match_results)
     wins = 0
     draws = 0
     losses = 0
     goals_for = 0
     goals_against = 0
 
-    for mr in match_results:
-        match_id, home_goals, away_goals = mr
-        is_home = is_home_team_map.get(match_id, False)
-
+    for is_home, home_goals, away_goals in match_results:
         if is_home:
             goals_for += home_goals
             goals_against += away_goals
@@ -390,7 +384,7 @@ def get_team_stats(db: Any, team_id: int) -> dict[str, Any]:
             else:
                 losses += 1
 
-    # Get most common opponents
+    # Get most common opponents with pagination
     opponents = (
         session.query(
             Team.id,
@@ -398,20 +392,22 @@ def get_team_stats(db: Any, team_id: int) -> dict[str, Any]:
             func.count(MatchTeam.id).label("matches"),
         )
         .join(MatchTeam, Team.id == MatchTeam.team_id)
-        .filter(
-            MatchTeam.match_id.in_(match_ids),
-            MatchTeam.team_id != team_id,
+        .join(Match, MatchTeam.match_id == Match.id)
+        .join(
+            team_matches,
+            (Match.id == team_matches.c.match_id) & (MatchTeam.team_id != team_id),
         )
         .group_by(Team.id)
         .order_by(desc("matches"))
-        .limit(5)
+        .offset(opponent_offset)
+        .limit(opponent_limit)
         .all()
     )
 
     # Format the opponents
     opponents_list = [{"id": o[0], "name": o[1], "matches": o[2]} for o in opponents]
 
-    # Get top scorers
+    # Get top scorers with pagination
     top_scorers = (
         session.query(
             Person.id,
@@ -423,12 +419,13 @@ def get_team_stats(db: Any, team_id: int) -> dict[str, Any]:
         .join(MatchEvent, MatchParticipant.id == MatchEvent.participant_id)
         .join(EventType, MatchEvent.event_type_id == EventType.id)
         .filter(
-            MatchParticipant.match_team_id.in_(match_team_ids),
+            MatchParticipant.match_team_id == team_matches.c.id,
             EventType.is_goal.is_(True),
         )
         .group_by(Person.id)
         .order_by(desc("goals"))
-        .limit(5)
+        .offset(scorer_offset)
+        .limit(scorer_limit)
         .all()
     )
 
@@ -449,12 +446,27 @@ def get_team_stats(db: Any, team_id: int) -> dict[str, Any]:
     }
 
 
-def get_match_stats(db: Any, match_id: int) -> dict[str, Any]:
+def get_match_stats(
+    db: Any,
+    match_id: int,
+    official_limit: int = 10,
+    official_offset: int = 0,
+    card_limit: int = 20,
+    card_offset: int = 0,
+    goal_limit: int = 20,
+    goal_offset: int = 0,
+) -> dict[str, Any]:
     """Get statistics for a specific match.
 
     Args:
         db: Database instance (can be either Database or Session)
         match_id: ID of the match
+        official_limit: Maximum number of officials to return
+        official_offset: Number of officials to skip
+        card_limit: Maximum number of cards to return
+        card_offset: Number of cards to skip
+        goal_limit: Maximum number of goals to return
+        goal_offset: Number of goals to skip
 
     Returns:
         Dictionary of statistics
@@ -475,37 +487,48 @@ def get_match_stats(db: Any, match_id: int) -> dict[str, Any]:
             "goals": [],
         }
 
-    # Get match teams
-    match_teams = (
-        session.query(MatchTeam, Team)
+    # Get match teams and result in a single query
+    match_data = (
+        session.query(
+            Team.id.label("home_team_id"),
+            Team.name.label("home_team"),
+            func.coalesce(MatchResult.home_goals, 0).label("home_goals"),
+            func.coalesce(MatchResult.away_goals, 0).label("away_goals"),
+        )
+        .join(
+            MatchTeam,
+            (Match.id == MatchTeam.match_id) & (MatchTeam.is_home_team.is_(True)),
+        )
         .join(Team, MatchTeam.team_id == Team.id)
-        .filter(MatchTeam.match_id == match_id)
-        .all()
+        .outerjoin(MatchResult, Match.id == MatchResult.match_id)
+        .filter(Match.id == match_id)
+        .first()
     )
 
-    home_team = ""
-    away_team = ""
-    home_team_id = 0
-    away_team_id = 0
-
-    for mt, team in match_teams:
-        if mt.is_home_team:
-            home_team = team.name
-            home_team_id = team.id
-        else:
-            away_team = team.name
-            away_team_id = team.id
-
-    # Get match result
-    match_result = (
-        session.query(MatchResult).filter(MatchResult.match_id == match_id).first()
+    away_team_data = (
+        session.query(
+            Team.id.label("away_team_id"),
+            Team.name.label("away_team"),
+        )
+        .join(
+            MatchTeam,
+            (Match.id == MatchTeam.match_id) & (MatchTeam.is_home_team.is_(False)),
+        )
+        .join(Team, MatchTeam.team_id == Team.id)
+        .filter(Match.id == match_id)
+        .first()
     )
 
-    score = "0-0"
-    if match_result:
-        score = f"{match_result.home_goals}-{match_result.away_goals}"
+    # Extract team and score information
+    home_team_id = match_data.home_team_id if match_data else 0
+    home_team = match_data.home_team if match_data else ""
+    away_team_id = away_team_data.away_team_id if away_team_data else 0
+    away_team = away_team_data.away_team if away_team_data else ""
+    home_goals = match_data.home_goals if match_data else 0
+    away_goals = match_data.away_goals if match_data else 0
+    score = f"{home_goals}-{away_goals}"
 
-    # Get officials
+    # Get officials with pagination
     officials = (
         session.query(
             Referee.id,
@@ -517,6 +540,8 @@ def get_match_stats(db: Any, match_id: int) -> dict[str, Any]:
         .join(Person, Referee.person_id == Person.id)
         .join(RefereeRole, RefereeAssignment.role_id == RefereeRole.id)
         .filter(RefereeAssignment.match_id == match_id)
+        .offset(official_offset)
+        .limit(official_limit)
         .all()
     )
 
@@ -530,7 +555,7 @@ def get_match_stats(db: Any, match_id: int) -> dict[str, Any]:
         for o in officials
     ]
 
-    # Get cards
+    # Get cards with pagination
     cards = (
         session.query(
             MatchEvent.id,
@@ -549,6 +574,9 @@ def get_match_stats(db: Any, match_id: int) -> dict[str, Any]:
             MatchEvent.match_id == match_id,
             EventType.is_card.is_(True),
         )
+        .order_by(MatchEvent.minute)
+        .offset(card_offset)
+        .limit(card_limit)
         .all()
     )
 
@@ -564,7 +592,7 @@ def get_match_stats(db: Any, match_id: int) -> dict[str, Any]:
         for c in cards
     ]
 
-    # Get goals
+    # Get goals with pagination
     goals = (
         session.query(
             MatchEvent.id,
@@ -583,6 +611,9 @@ def get_match_stats(db: Any, match_id: int) -> dict[str, Any]:
             MatchEvent.match_id == match_id,
             EventType.is_goal.is_(True),
         )
+        .order_by(MatchEvent.minute)
+        .offset(goal_offset)
+        .limit(goal_limit)
         .all()
     )
 
