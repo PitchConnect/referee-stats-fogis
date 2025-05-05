@@ -63,8 +63,9 @@ def test_referee_stats_performance(in_memory_db: Session) -> None:
     # Print the execution time for reference
     print(f"get_referee_stats execution time: {execution_time:.6f} seconds")
 
-    # No specific assertion here, as the execution time will vary
-    # In a real test, you might compare it to a baseline or set a maximum threshold
+    # Basic assertion to ensure the function completes in a reasonable time
+    # This is a very generous threshold that should pass on any system
+    assert execution_time < 10.0, "Performance test took too long"
 
 
 def test_most_common_co_officials_performance(in_memory_db: Session) -> None:
@@ -86,9 +87,12 @@ def test_most_common_co_officials_performance(in_memory_db: Session) -> None:
         f"{time_with_pagination:.6f} seconds"
     )
 
-    # Pagination should be faster, but this depends on the dataset size
-    # This assertion might not always hold true for small datasets
-    # assert time_with_pagination <= time_without_pagination
+    # Basic assertion to ensure both functions complete
+    # In a real test with larger datasets, we would expect pagination to be faster
+    assert (
+        time_without_pagination < 10.0
+    ), "Performance test without pagination took too long"
+    assert time_with_pagination < 10.0, "Performance test with pagination took too long"
 
 
 def test_most_carded_players_performance(in_memory_db: Session) -> None:
@@ -110,6 +114,12 @@ def test_most_carded_players_performance(in_memory_db: Session) -> None:
         f"{time_with_pagination:.6f} seconds"
     )
 
+    # Basic assertion to ensure both functions complete
+    assert (
+        time_without_pagination < 10.0
+    ), "Performance test without pagination took too long"
+    assert time_with_pagination < 10.0, "Performance test with pagination took too long"
+
 
 def test_player_stats_performance(in_memory_db: Session) -> None:
     """Test the performance of get_player_stats."""
@@ -123,6 +133,12 @@ def test_player_stats_performance(in_memory_db: Session) -> None:
 
     print(f"get_player_stats without pagination: {time_without_pagination:.6f} seconds")
     print(f"get_player_stats with pagination: {time_with_pagination:.6f} seconds")
+
+    # Basic assertion to ensure both functions complete
+    assert (
+        time_without_pagination < 10.0
+    ), "Performance test without pagination took too long"
+    assert time_with_pagination < 10.0, "Performance test with pagination took too long"
 
 
 def test_team_stats_performance(in_memory_db: Session) -> None:
@@ -138,6 +154,12 @@ def test_team_stats_performance(in_memory_db: Session) -> None:
     print(f"get_team_stats without pagination: {time_without_pagination:.6f} seconds")
     print(f"get_team_stats with pagination: {time_with_pagination:.6f} seconds")
 
+    # Basic assertion to ensure both functions complete
+    assert (
+        time_without_pagination < 10.0
+    ), "Performance test without pagination took too long"
+    assert time_with_pagination < 10.0, "Performance test with pagination took too long"
+
 
 def test_match_stats_performance(in_memory_db: Session) -> None:
     """Test the performance of get_match_stats."""
@@ -151,3 +173,9 @@ def test_match_stats_performance(in_memory_db: Session) -> None:
 
     print(f"get_match_stats without pagination: {time_without_pagination:.6f} seconds")
     print(f"get_match_stats with pagination: {time_with_pagination:.6f} seconds")
+
+    # Basic assertion to ensure both functions complete
+    assert (
+        time_without_pagination < 10.0
+    ), "Performance test without pagination took too long"
+    assert time_with_pagination < 10.0, "Performance test with pagination took too long"
