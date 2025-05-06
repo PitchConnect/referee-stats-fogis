@@ -57,27 +57,37 @@ def get_referee_stats(db: Any, referee_id: int) -> dict[str, Any]:
     stats = (
         session.query(
             func.count(func.distinct(Match.id)).label("total_matches"),
-            func.sum(
-                func.case(
-                    [
-                        (
-                            EventType.is_card.is_(True)
-                            & EventType.name.like("%Yellow%"),
-                            1,
-                        )
-                    ],
-                    else_=0,
-                )
+            func.coalesce(
+                func.sum(
+                    func.case(
+                        [
+                            (
+                                EventType.is_card.is_(True)
+                                & EventType.name.like("%Yellow%"),
+                                1,
+                            )
+                        ]
+                    )
+                ),
+                0,
             ).label("yellow_cards"),
-            func.sum(
-                func.case(
-                    [(EventType.is_card.is_(True) & EventType.name.like("%Red%"), 1)],
-                    else_=0,
-                )
+            func.coalesce(
+                func.sum(
+                    func.case(
+                        [
+                            (
+                                EventType.is_card.is_(True)
+                                & EventType.name.like("%Red%"),
+                                1,
+                            )
+                        ]
+                    )
+                ),
+                0,
             ).label("red_cards"),
-            func.sum(func.case([(EventType.is_goal.is_(True), 1)], else_=0)).label(
-                "goals"
-            ),
+            func.coalesce(
+                func.sum(func.case([(EventType.is_goal.is_(True), 1)])), 0
+            ).label("goals"),
         )
         .select_from(Match)
         .join(referee_matches, Match.id == referee_matches.c.match_id)
@@ -237,26 +247,36 @@ def get_player_stats(
     stats = (
         session.query(
             func.count(func.distinct(MatchParticipant.id)).label("total_matches"),
-            func.sum(func.case([(EventType.is_goal.is_(True), 1)], else_=0)).label(
-                "goals"
-            ),
-            func.sum(
-                func.case(
-                    [
-                        (
-                            EventType.is_card.is_(True)
-                            & EventType.name.like("%Yellow%"),
-                            1,
-                        )
-                    ],
-                    else_=0,
-                )
+            func.coalesce(
+                func.sum(func.case([(EventType.is_goal.is_(True), 1)])), 0
+            ).label("goals"),
+            func.coalesce(
+                func.sum(
+                    func.case(
+                        [
+                            (
+                                EventType.is_card.is_(True)
+                                & EventType.name.like("%Yellow%"),
+                                1,
+                            )
+                        ]
+                    )
+                ),
+                0,
             ).label("yellow_cards"),
-            func.sum(
-                func.case(
-                    [(EventType.is_card.is_(True) & EventType.name.like("%Red%"), 1)],
-                    else_=0,
-                )
+            func.coalesce(
+                func.sum(
+                    func.case(
+                        [
+                            (
+                                EventType.is_card.is_(True)
+                                & EventType.name.like("%Red%"),
+                                1,
+                            )
+                        ]
+                    )
+                ),
+                0,
             ).label("red_cards"),
         )
         .select_from(MatchParticipant)
