@@ -405,6 +405,7 @@ def test_get_most_common_co_officials(mock_db: MagicMock) -> None:
     mock_officials_query.filter = MagicMock(return_value=mock_officials_query)
     mock_officials_query.group_by = MagicMock(return_value=mock_officials_query)
     mock_officials_query.order_by = MagicMock(return_value=mock_officials_query)
+    mock_officials_query.offset = MagicMock(return_value=mock_officials_query)
     mock_officials_query.limit = MagicMock(return_value=mock_officials_query)
 
     # Mock the result
@@ -413,8 +414,8 @@ def test_get_most_common_co_officials(mock_db: MagicMock) -> None:
         (3, "Jane", "Smith", 3),
     ]
 
-    # Call the function
-    result = get_most_common_co_officials(mock_db, 1)
+    # Call the function with limit=2 to match the mock data
+    result = get_most_common_co_officials(mock_db, 1, limit=2)
 
     # Check the result
     assert isinstance(result, list)
@@ -440,6 +441,7 @@ def test_get_most_carded_players(mock_db: MagicMock) -> None:
     mock_players_query.filter = MagicMock(return_value=mock_players_query)
     mock_players_query.group_by = MagicMock(return_value=mock_players_query)
     mock_players_query.order_by = MagicMock(return_value=mock_players_query)
+    mock_players_query.offset = MagicMock(return_value=mock_players_query)
     mock_players_query.limit = MagicMock(return_value=mock_players_query)
 
     # Mock the result
@@ -448,8 +450,8 @@ def test_get_most_carded_players(mock_db: MagicMock) -> None:
         (102, "Player", "Two", 2),
     ]
 
-    # Call the function
-    result = get_most_carded_players(mock_db, 1)
+    # Call the function with limit=2 to match the mock data
+    result = get_most_carded_players(mock_db, 1, limit=2)
 
     # Check the result
     assert isinstance(result, list)
