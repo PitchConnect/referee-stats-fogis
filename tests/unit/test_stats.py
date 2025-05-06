@@ -413,8 +413,8 @@ def test_get_most_common_co_officials(mock_db: MagicMock) -> None:
         (3, "Jane", "Smith", 3),
     ]
 
-    # Call the function
-    result = get_most_common_co_officials(mock_db, 1)
+    # Call the function with limit=2 to match the mock data
+    result = get_most_common_co_officials(mock_db, 1, limit=2)
 
     # Check the result
     assert isinstance(result, list)
@@ -448,8 +448,8 @@ def test_get_most_carded_players(mock_db: MagicMock) -> None:
         (102, "Player", "Two", 2),
     ]
 
-    # Call the function
-    result = get_most_carded_players(mock_db, 1)
+    # Call the function with limit=2 to match the mock data
+    result = get_most_carded_players(mock_db, 1, limit=2)
 
     # Check the result
     assert isinstance(result, list)
